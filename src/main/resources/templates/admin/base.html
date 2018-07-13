@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3">
+<head>
+    <meta charset="UTF-8">
+    <title th:text="${title}"></title>
+    <link rel="stylesheet" th:href="@{/bootstrap.min.css}" type="text/css">
+    <script th:src="@{/jquery-3.2.1.min.js}"></script>
+    <script th:src="@{/bootstrap.min.js}"></script>
+    <link rel="stylesheet" href="/dashboard.css" type="text/css">
+    <link href="/css/jquery-accordion-menu.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/font-awesome.css" rel="stylesheet" type="text/css"/>
+    <link href="/css/buttons.css" rel="stylesheet" type="text/css"/>
+    <script src="/js/jquery-accordion-menu.js" type="text/javascript"></script>
+    <style>
+        /*body{*/
+        /*background-image: url('/images/background.png');*/
+        /*background-repeat: no-repeat;*/
+        /*background-size:100%;*/
+        /*}*/
+        #demo-list a {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            -o-text-overflow: ellipsis;
+            white-space: nowrap;
+            width: 100%;
+        }
+
+    </style>
+
+
+    <script type="text/javascript">
+
+        $(function () {
+            //顶部导航切换
+            $("#demo-list li").click(function () {
+                $("#demo-list li.active").removeClass("active")
+                $(this).addClass("active");
+            })
+        })
+    </script>
+    <div th:replace="::headscript"></div>
+
+
+</head>
+<body>
+<script type="text/javascript" color="28,221,177" opacity='1' count="200" src="/canvas-nest.js"></script>
+
+
+<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/admin/">大学生成绩管理系统</a>
+        </div>
+        <div class="navbar-collapse collapse">
+            <ul class="nav navbar-nav navbar-right">
+                <li><a href="/admin/modifyPassword">修改密码</a></li>
+                <li><a href="/logout">登出</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="row-fluid">
+        <div class="col-sm-3 col-md-3 sidebar">
+            <ul class="nav nav-sidebar">
+                <div id="jquery-accordion-menu" class="jquery-accordion-menu red">
+                    <ul id="demo-list">
+                        <li class="active"><a href="#"><i class="fa fa-home"></i>Home </a></li>
+                        <li><a href="#"><i class="fa"></i>学生管理</a>
+                            <ul class="submenu">
+                                <li><a href="/admin/studentManageAdd">添加学生信息</a></li>
+                                <li><a href="/admin/studentManageDelete">删除学生信息</a></li>
+                                <li><a href="/admin/studentManageModify">修改学生信息</a></li>
+                                <li><a href="/admin/studentManageFind">查询学生信息</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#"><i class="fa"></i>教师管理</a>
+                            <ul class="submenu">
+                                <li><a href="/admin/teacherManageAdd">添加教师信息</a></li>
+                                <li><a href="/admin/teacherManageDelete">删除教师信息</a></li>
+                                <li><a href="/admin/teacherManageModify">修改教师信息</a></li>
+                                <li><a href="/admin/teacherManageFind">查询教师信息</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#"><i class="fa"></i>课程管理</a>
+                            <ul class="submenu">
+                                <li><a href="/admin/courseManageAdd">添加课程信息</a></li>
+                                <li><a href="/admin/courseManageDelete">删除课程信息</a></li>
+                                <li><a href="/admin/courseManageModify">修改课程信息</a></li>
+                                <li><a href="/admin/courseManageFind">查询课程信息</a></li>
+                            </ul>
+                        </li>
+                        <li><a href="#"><i class="fa"></i>成绩管理</a>
+                            <ul class="submenu">
+                                <li><a href="/admin/scoreManage">排名统计</a></li>
+                                <li><a href="/admin/scoreCalc">计算总学分和GPA</a></li>
+                            </ul>
+                        </li>
+                        <!--<li><a href="#"><i class="fa fa-user"></i>About </a></li>
+                        <li><a href="#"><i class="fa fa-envelope"></i>Contact </a></li>-->
+                    </ul>
+                    <!--<div class="jquery-accordion-menu-footer">
+                        Footer
+                    </div>-->
+                </div>
+            </ul>
+
+        </div>
+
+        <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-3 main">
+            <div class="panel panel-primary">
+                <div class="panel-body">
+                    <div th:replace="::content"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+<script type="text/javascript">
+    (function ($) {
+        $.expr[":"].Contains = function (a, i, m) {
+            return (a.textContent || a.innerText || "").toUpperCase().indexOf(m[3].toUpperCase()) >= 0;
+        };
+
+        function filterList(header, list) {
+            //@header 头部元素
+            //@list 无需列表
+            //创建一个搜素表单
+            var form = $("<form>").attr({
+                "class": "filterform",
+                action: "#"
+            }), input = $("<input>").attr({
+                "class": "filterinput",
+                type: "text"
+            });
+            $(form).append(input).appendTo(header);
+            $(input).change(function () {
+                var filter = $(this).val();
+                if (filter) {
+                    $matches = $(list).find("a:Contains(" + filter + ")").parent();
+                    $("li", list).not($matches).slideUp();
+                    $matches.slideDown();
+                } else {
+                    $(list).find("li").slideDown();
+                }
+                return false;
+            }).keyup(function () {
+                $(this).change();
+            });
+        }
+
+        $(function () {
+            filterList($("#form"), $("#demo-list"));
+        });
+    })(jQuery);
+</script>
+
+<script type="text/javascript">
+
+    jQuery("#jquery-accordion-menu").jqueryAccordionMenu();
+
+</script>
+
+
+</body>
+</html>

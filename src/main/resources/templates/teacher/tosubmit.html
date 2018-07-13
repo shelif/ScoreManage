@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/teacher/base (title='提交成绩')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        var info = new Array();
+        var length;
+        var arraydata;
+        window.onload = function () {
+
+
+
+
+            var reg1 = new RegExp("(^|&)" + "tcid" + "=([^&]*)(&|$)", "i");
+            var r1 = window.location.search.substr(1).match(reg1);
+            if (r1 != null) var tcid= unescape(r1[2]);
+
+
+
+            console.log("tcid is:"+ tcid );
+            //动态将变量存为json
+            var data={};
+
+
+            $.ajax({
+                type: "GET",
+                url: "/teacher/tosubmitGET",
+                async: false,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'tcId':tcid},
+                success: function (jsonData) {
+                    var s = "";
+                    arraydata = jsonData;
+                    length = jsonData.data.length;
+                    for(var i=0;i < jsonData.data.length; i++) {
+
+                        s += '<tr><td>' + jsonData.data[i].sId + '</td><td>' + jsonData.data[i].cName
+                            +'</td><td>' + jsonData.data[i].scGrade
+                            +'</td><td>' +' <input type="text" id="scGrade' + i +
+                            '\"placeholder="成绩" style="width: 30%">'
+                            +'</td></tr>';
+
+                        console.log(s);
+
+
+                    }
+                    $('#scoreTable').append(s);
+
+
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询学生失败");
+                }
+            });
+        };
+
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+
+            <div class="table_perinfo"  >
+                <h2>已开设课程</h2>
+
+                <table class="table" id="scoreTable">
+                    <tr>
+                        <th>学号</th>
+                        <th>姓名</th>
+                        <th>成绩</th>
+                        <th>修改成绩</th>
+                    </tr>
+
+                </table>
+                <a onclick="scoreAdd()"  style="margin-left: 380px" class="button button-3d button-primary button-rounded button-tiny" role="button">提交成绩</a>
+                <script>
+                    function scoreAdd(){
+                        var reg2 = new RegExp("(^|&)" + "cid" + "=([^&]*)(&|$)", "i");
+                        var r2 = window.location.search.substr(1).match(reg2);
+                        if (r2 != null) var cid= unescape(r2[2]);
+                        for(var i = 0 ; i< length ; i ++){
+                            var inputvalue = $("#scGrade" + i).val();
+                            if(inputvalue>100)
+                            {
+                                alert("成绩不能超过100");
+                                return;
+                            }
+                            if(inputvalue<0)
+                            {
+                                alert("成绩不能低于0");
+                                return;
+                            }
+                            if(inputvalue=="")
+                            {
+                                inputvalue = -1;
+                            }
+                            info.push({"scSId":arraydata.data[i].sId,"scCId":cid,"scGrade":inputvalue  })
+                        }
+
+
+                        $.ajax({
+                            type: "PUT",
+                            url: "/teacher/tosubmitPUT",
+                            async: false,
+                            contentType: "application/json;charset=UTF-8",
+                            dataType:"json",
+                            data: JSON.stringify(info),
+                            success: function (jsonData) {
+                                if(jsonData.code==0) {
+
+                                    window.location.reload();
+                                }
+                                else
+                                    alert("添加失败");
+                            },
+
+                            error: function (jsonData) {
+                                console.log(jsonData.code);
+                                alert("数据格式有误");
+
+
+                            }
+                        });
+                    };
+
+                </script>
+
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+</html>
+
+

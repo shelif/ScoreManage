@@ -1,0 +1,243 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.TeachingClassDao">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.TeachingClass">
+    <id column="tc_id" jdbcType="VARCHAR" property="tcId" />
+    <result column="tc_c_id" jdbcType="VARCHAR" property="tcCId" />
+    <result column="tc_t_id" jdbcType="VARCHAR" property="tcTId" />
+    <result column="tc_capacity" jdbcType="VARCHAR" property="tcCapacity" />
+    <result column="tc_week_time" jdbcType="VARCHAR" property="tcWeekTime" />
+    <result column="tc_lesson" jdbcType="VARCHAR" property="tcLesson" />
+    <result column="tc_location" jdbcType="VARCHAR" property="tcLocation" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    tc_id, tc_c_id, tc_t_id, tc_capacity, tc_week_time, tc_lesson, tc_location
+  </sql>
+  <select id="selectByExample" parameterType="com.example.demo.entity.TeachingClassExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from teaching_class
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="java.lang.String" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from teaching_class
+    where tc_id = #{tcId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.String">
+    delete from teaching_class
+    where tc_id = #{tcId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.example.demo.entity.TeachingClassExample">
+    delete from teaching_class
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.TeachingClass">
+    insert into teaching_class (tc_id, tc_c_id, tc_t_id, 
+      tc_capacity, tc_week_time, tc_lesson, 
+      tc_location)
+    values (#{tcId,jdbcType=VARCHAR}, #{tcCId,jdbcType=VARCHAR}, #{tcTId,jdbcType=VARCHAR}, 
+      #{tcCapacity,jdbcType=VARCHAR}, #{tcWeekTime,jdbcType=VARCHAR}, #{tcLesson,jdbcType=VARCHAR}, 
+      #{tcLocation,jdbcType=VARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.TeachingClass">
+    insert into teaching_class
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="tcId != null">
+        tc_id,
+      </if>
+      <if test="tcCId != null">
+        tc_c_id,
+      </if>
+      <if test="tcTId != null">
+        tc_t_id,
+      </if>
+      <if test="tcCapacity != null">
+        tc_capacity,
+      </if>
+      <if test="tcWeekTime != null">
+        tc_week_time,
+      </if>
+      <if test="tcLesson != null">
+        tc_lesson,
+      </if>
+      <if test="tcLocation != null">
+        tc_location,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="tcId != null">
+        #{tcId,jdbcType=VARCHAR},
+      </if>
+      <if test="tcCId != null">
+        #{tcCId,jdbcType=VARCHAR},
+      </if>
+      <if test="tcTId != null">
+        #{tcTId,jdbcType=VARCHAR},
+      </if>
+      <if test="tcCapacity != null">
+        #{tcCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="tcWeekTime != null">
+        #{tcWeekTime,jdbcType=VARCHAR},
+      </if>
+      <if test="tcLesson != null">
+        #{tcLesson,jdbcType=VARCHAR},
+      </if>
+      <if test="tcLocation != null">
+        #{tcLocation,jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.example.demo.entity.TeachingClassExample" resultType="java.lang.Long">
+    select count(*) from teaching_class
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update teaching_class
+    <set>
+      <if test="record.tcId != null">
+        tc_id = #{record.tcId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tcCId != null">
+        tc_c_id = #{record.tcCId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tcTId != null">
+        tc_t_id = #{record.tcTId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tcCapacity != null">
+        tc_capacity = #{record.tcCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tcWeekTime != null">
+        tc_week_time = #{record.tcWeekTime,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tcLesson != null">
+        tc_lesson = #{record.tcLesson,jdbcType=VARCHAR},
+      </if>
+      <if test="record.tcLocation != null">
+        tc_location = #{record.tcLocation,jdbcType=VARCHAR},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update teaching_class
+    set tc_id = #{record.tcId,jdbcType=VARCHAR},
+      tc_c_id = #{record.tcCId,jdbcType=VARCHAR},
+      tc_t_id = #{record.tcTId,jdbcType=VARCHAR},
+      tc_capacity = #{record.tcCapacity,jdbcType=VARCHAR},
+      tc_week_time = #{record.tcWeekTime,jdbcType=VARCHAR},
+      tc_lesson = #{record.tcLesson,jdbcType=VARCHAR},
+      tc_location = #{record.tcLocation,jdbcType=VARCHAR}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.TeachingClass">
+    update teaching_class
+    <set>
+      <if test="tcCId != null">
+        tc_c_id = #{tcCId,jdbcType=VARCHAR},
+      </if>
+      <if test="tcTId != null">
+        tc_t_id = #{tcTId,jdbcType=VARCHAR},
+      </if>
+      <if test="tcCapacity != null">
+        tc_capacity = #{tcCapacity,jdbcType=VARCHAR},
+      </if>
+      <if test="tcWeekTime != null">
+        tc_week_time = #{tcWeekTime,jdbcType=VARCHAR},
+      </if>
+      <if test="tcLesson != null">
+        tc_lesson = #{tcLesson,jdbcType=VARCHAR},
+      </if>
+      <if test="tcLocation != null">
+        tc_location = #{tcLocation,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where tc_id = #{tcId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.TeachingClass">
+    update teaching_class
+    set tc_c_id = #{tcCId,jdbcType=VARCHAR},
+      tc_t_id = #{tcTId,jdbcType=VARCHAR},
+      tc_capacity = #{tcCapacity,jdbcType=VARCHAR},
+      tc_week_time = #{tcWeekTime,jdbcType=VARCHAR},
+      tc_lesson = #{tcLesson,jdbcType=VARCHAR},
+      tc_location = #{tcLocation,jdbcType=VARCHAR}
+    where tc_id = #{tcId,jdbcType=VARCHAR}
+  </update>
+</mapper>

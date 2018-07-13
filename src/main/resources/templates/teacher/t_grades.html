@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/teacher/base (title='已开设课程详情')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        window.onload = function () {
+
+
+            $.ajax({
+                type: "GET",
+                url: "/teacher/t_gradesGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'tid':'tid' },
+                success: function (jsonData) {
+                    var s = "";
+                    for(var i=0;i < jsonData.data.length; i++) {
+
+                        s += '<tr><td>' + jsonData.data[i].tcid + '</td><td>' + jsonData.data[i].name
+                            +  '</td><td>' + jsonData.data[i].score +
+                            '</td><td>' + '<button  onclick=\"javascript:window.location.href =\'/teacher/t_selected_grade?tcid='
+                            + jsonData.data[i].tcid + '&cid='+   jsonData.data[i].cid  +  '\'\"  class="button button-3d button-primary button-rounded button-tiny" type="submit">查看</button>'
+
+                            +'</td></tr>';
+                        console.log(s);
+
+
+                    }
+                    $('#teacherCourseTable').append(s);
+
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询课程失败");
+                }
+            });
+        };
+
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <div class="table_perinfo" >
+                <h2>成绩提交情况</h2>
+                <table class="table" id="teacherCourseTable">
+                    <tr>
+                        <th>课程号</th>
+                        <th>课程名</th>
+                        <th>课程学分</th>
+                        <th>查看</th>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+</html>
+
+

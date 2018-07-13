@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/student/base (title='查询选课信息')">
+<!-- layout文件路径-->
+<div th:fragment="headscript">
+
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <h1>查询课程信息</h1>
+        </div>
+        请选择查询条件:
+        <select id="sel" >
+            <option value="1" >课程号（八位数字）</option>
+            <option value="2" >课程名称</option>
+            <
+        </select>
+
+        <input  id="searchValue"style="margin-left:10px;width:25%" type="text" name="attr"   />
+
+
+        <input  onclick="findCourses()" style="margin-left:100px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit" value="查询">
+        <script>
+            // 查询课程请求发送
+            function findCourses(){
+                var searchType = $("#sel option:selected").val();
+                var searchValue =  $("#searchValue").val();
+
+//
+                var re = /^[0-9]+.?[0-9]*/;
+                if (searchType == 1 && !re.test(searchValue)) {
+                    alert('课程号只能输入数字');
+                    return ;
+                }
+                if(searchType == 1 && searchValue.length != 8){
+                    alert("课程号必须为8位数字");
+                    return;
+                }
+
+
+                searchValue = encodeURI(searchValue);
+
+                // alert(searchValue);
+
+                window.location.href = "/student/coursesFindResult?searchType="+searchType+"&searchValue="+ searchValue;
+            }
+
+        </script>
+
+
+
+
+        <!--input id="S_search_ResetButton" style="margin-left: 50px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="reset" value="重置">
+        <input id="S_search_SearchButton" style="margin-left: 180px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit" value="查询" onclick="search()"-->
+
+        <!--script>
+            function search() {
+                var requestLocation = "lesson_search_result";
+                requestLocation += "?search_Cno=";
+                requestLocation += $("#S_search_Cno").val();
+                requestLocation += "&search_Cname=";
+                requestLocation += $("#S_search_Cname").val();
+                requestLocation += "&search_Ccredit=";
+                requestLocation += $("#S_search_Ccredit").val();
+                requestLocation += "&search_teacher=";
+                requestLocation += $("#S_search_teacher").val();
+                requestLocation += "&search_Class=";
+                requestLocation += $("#S_search_Class").val();
+                requestLocation += "&search_Cplace=";
+                requestLocation += $("#S_search_Cplace").val();
+
+                requestLocation += "&day=";
+                // $('#test option:selected').val();
+                requestLocation += $("#S_search_Cday option:selected").val();
+
+                requestLocation += "&section=";
+                requestLocation += $("#S_search_Csection").val();
+
+                window.location.href(requestLocation);
+            }
+        </script-->
+
+    </div>
+</div>
+</html>

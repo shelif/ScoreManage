@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='查找教师')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+
+</div>
+<div th:fragment="content">
+    <div>
+
+        请选择查询条件:
+        <select id="sel" >
+            <option value="tid"type="tId">教师工号</option>
+            <option value="tname"type="tName">教师姓名</option>
+
+
+        </select>
+        <input  style="margin-left:10px;width: 25% " type="text" name="attr" id="attr">
+
+
+        <input onclick="findTeacher()" style="margin-left:100px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit" value="查询">
+    </div>
+    <script>
+        function findTeacher(){
+
+            var attrValue =  $("#attr").val();
+            var attrType = $("#sel").find("option:selected").attr("type");
+            if(attrValue == "")
+            {
+                alert("数据不能为空");
+                return;
+            }
+            if(attrType == "tName")
+                attrValue= encodeURI(attrValue);
+            if(attrType == "tId")
+            {
+                var re = /^[0-9]+.?[0-9]*/;
+                if (!re.test(attrValue)) {
+                    alert('工号只能为数字');
+                    return ;
+                }
+                if(attrValue.length!=9){
+                    alert("工号必须为9位数字");
+                    return;
+                }
+            }
+            window.location.href = "/admin/teacherFindResult?attrType="+attrType+"&attrValue="+attrValue;
+
+        };
+
+    </script>
+</div>
+</html>

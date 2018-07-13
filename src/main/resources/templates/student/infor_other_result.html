@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/student/base (title='查询他人信息结果')">
+<!-- layout文件路径-->
+<div th:fragment="headscript">
+    <!-- 功能：利用ajax方法请求需要查询的他人的信息--
+        <!-- 编写人：陈雁彬-->
+    <!-- 请求地址：/student/queryOtherInfoAndShow-->
+    <!-- 返回信息：jsonData.data-->
+    <!-- 解码需求：由于中文字符在url传输过程中出现的乱码问题，所以需要Unicode编码和解码-->
+    <!-- 字段详细信息：-->
+    <!-- jsonData.data.sId - 学号 -->
+    <!-- jsonData.data.sName - 学生姓名 -->
+    <!-- jsonData.data.sMajor - 学生专业 -->
+    <!-- jsonData.data.sClass - 学生班级 -->
+    <!-- jsonData.data.sTotalScore - 学生总学分 -->
+    <!-- jsonData.data.sGpa - 学生GPA -->
+    <script>
+        window.onload = function () {
+            // 解码过程
+            var reg1 = new RegExp("(^|&)" + "searchType" + "=([^&]*)(&|$)", "i");
+            var r1 = window.location.search.substr(1).match(reg1);
+            if (r1 != null) var searchType= unescape(r1[2]);
+
+            if(searchType == "2")
+            { var reg2 = new RegExp("(^|&)" + "searchValue" + "=([^&]*)(&|$)", "i");
+                var r2 = window.location.search.substr(1).match(reg2);
+                if (r2 != null) var searchValue= decodeURI(r2[2]);
+            }
+            else
+            {
+                var reg2 = new RegExp("(^|&)" + "searchValue" + "=([^&]*)(&|$)", "i");
+                var r2 = window.location.search.substr(1).match(reg2);
+                if (r2 != null) var searchValue= unescape(r2[2]);
+            }
+
+            // 动态将变量存为json
+
+            var data={};
+            data[searchType]=searchValue;
+            // alert(searchType + ": " + searchValue);
+            $.ajax({
+                type: "GET",
+                url: "/student/queryOtherInfoAndShow",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: data,
+                success: function (jsonData) {
+
+                    if(jsonData.data == null){
+                        alert("未能查到相关信息！");
+                        return;
+                    }
+
+                    var s = "";
+                    for(var i = 0 ; i < jsonData.data.length; i++) {
+                        s += '<tr><td>' + jsonData.data[i].sId + '</td><td>' + jsonData.data[i].sName + '</td><td>' + jsonData.data[i].sMajor+ '</td>'
+                            + '<td>' + jsonData.data[i].sClass + '</td><td>' + jsonData.data[i].sTotalScore+ '</td><td>' +
+
+                            jsonData.data[i].sGpa + '</td></tr>';
+                        console.log(s);
+                    }
+                    $('#showOtherInfo').append(s);
+                },
+                error: function (jsonData) {
+                    //                   alert("haha");
+                    console.log(data.code);
+                    alert(data.code);
+                }
+            });
+        };
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <h1>他人信息查询结果</h1>
+        </div>
+        <form id="S_other_ResultInfor"><div>
+            <table class="table col1"  id="showOtherInfo">
+                <thead>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>专业</th>
+                    <th>班级</th>
+                    <th>总学分</th>
+                    <th>总绩点</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+
+            <input id="S_other_ResultBackButton" style="margin-left: 75%;margin-top: 20px" class="button button-3d button-primary button-rounded" type="button" value="返回" onclick="javascript:history.back(-1);">
+        </div> </form>
+    </div>
+</div>
+</html>

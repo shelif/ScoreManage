@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/teacher/base (title='主页')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        window.onload = function () {
+
+
+
+            $.ajax({
+                type: "GET",
+                url: "/teacher/homeGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'detail': 'courseDetail'},
+                success: function (jsonData) {
+                    var s = "";
+                    s += '<tr><td>' + jsonData.data.tId + '</td><td>' + jsonData.data.tName+'</td></tr>';
+
+                    $('#teacherTable').append(s);
+
+                },
+
+                error: function (jsonData) {
+                    console.log(data.code);
+                    alert("系统异常");
+                }
+            });
+        };
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+
+            <div class="table_perinfo"  >
+
+                <h2>个人信息</h2>
+                <table class="table" id = "teacherTable">
+                    <tr>
+                        <th>工号</th>
+                        <th>姓名</th>
+                    </tr>
+
+                </table>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+</html>
+
+

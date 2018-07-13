@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/teacher/base (title='个人信息')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+
+        window.onload = function () {
+
+
+
+
+
+
+
+
+            $.ajax({
+                type: "GET",
+                url: "/teacher/t_personal_infoGET",
+                async: false,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'tcId':'tcid'},
+                success: function (jsonData) {
+                    var s = "";
+                    var d = "";
+                    d += '<tr><td>' + jsonData.data.tId + '</td><td>' + jsonData.data.tName
+                        +'</td></tr>';
+                    for(var i=0;i < jsonData.data.submitClasses.length; i++) {
+
+                        s += '<tr><td>'  + jsonData.data.submitClasses[i].tcid
+                            +'</td><td>' + jsonData.data.submitClasses[i].cid
+                            +'</td><td>' + jsonData.data.submitClasses[i].name
+                            +'</td><td>' + jsonData.data.submitClasses[i].score
+                            +'</td><td>' + jsonData.data.submitClasses[i].time
+                            +'</td><td>' + jsonData.data.submitClasses[i].location
+                            +'</td><td>' + jsonData.data.submitClasses[i].capacity
+                            +'</td><td>' + jsonData.data.submitClasses[i].temp
+                            +'</td></tr>';
+
+                        console.log(s);
+
+
+                    }
+                    console.log(d);
+                    $('#teacherTable').append(d);
+                    $('#courseTable').append(s);
+
+
+
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询教师失败");
+                }
+            });
+        };
+
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <div class="table-responsive" >
+
+                <h2>个人信息</h2>
+                <table class="table" id ="teacherTable">
+                    <tr>
+                        <th>工号</th>
+                        <th>姓名</th>
+                    </tr>
+
+                </table>
+
+                <h2>开设课程信息</h2>
+                <table class="table" id ="courseTable">
+                    <tr>
+                        <th>教学班号</th>
+                        <th>课程号</th>
+                        <th>课程名</th>
+                        <th>课程学分</th>
+                        <th>上课时间</th>
+                        <th>上课地点</th>
+                        <th>教室容量</th>
+                        <th>选课人数</th>
+                    </tr>
+
+
+                </table>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+</html>
+
+

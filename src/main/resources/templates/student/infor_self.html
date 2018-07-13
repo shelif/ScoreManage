@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/student/base (title='查询个人信息')">
+<!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>$(document).ready(function(c) {
+
+        <!--此段代码同首页的ajax请求类似-->
+        $.ajax({
+            type: "GET",
+            url: "/student/homeGET",
+            async: true,
+            contentType: "application/json;charset=UTF-8",
+            dataType:"json",
+            data: {'code': '0'},
+            success: function (jsonData) {
+
+                $("#sid").html(jsonData.data.sId);
+                $("#sname").html(jsonData.data.sName);
+                $("#smajor").html(jsonData.data.sMajor);
+                $("#sclass").html(jsonData.data.sClass);
+
+                $("#totalScore").html(jsonData.data.sTotalScore);
+                $("#GPA").html(jsonData.data.sGpa);
+
+                $("#sayStudentHello").html("学生 " + jsonData.data.sId + "，您好！");
+            },
+
+            error: function (jsonData) {
+                alert("请求失败！");
+                console.log(jsonData.code);
+
+            }
+        });
+
+        <!--利用ajax方法获得学生的信息和成绩的信息，对于未登记成绩的-->
+        $.ajax({
+            type: "GET",
+            url: "/student/showCourseInfoAndScore",
+            async: true,
+            contentType: "application/json;charset=UTF-8",
+            dataType:"json",
+            data: {},
+            success: function (jsonData) {
+                var s = "";
+                //                returnObj[0] = teachingClasses;
+                //                returnObj[1] = courses;
+                //                returnObj[2] = teachers;
+                //                  [3] = scs;
+
+                for(var i = 0 ; i < jsonData.data[0].length; i++) {
+                    if(jsonData.data[3][i].scGrade == 0)jsonData.data[3][i].scGrade = "未登记成绩";
+
+
+                    s += '<tr><td>' + jsonData.data[1][i].cId + '</td><td>' + jsonData.data[1][i].cName + '</td><td>' + jsonData.data[1][i].cScore+ '</td>'
+                        + '<td>' + jsonData.data[2][i].tName + '</td><td>' + jsonData.data[3][i].scGrade + '</td></tr>';
+                    //   console.log(s);
+                }
+                $('#courseInfoList').append(s);
+            },
+            error: function (jsonData) {
+                console.log(data.code);
+                alert(data.code);
+            }
+        });
+    });
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <h1>个人基本信息</h1>
+            <form id="S_self_SelfInfor">
+                <table class="table col1" style="margin-top: 20px" id="personalBasicInfo">
+                    <thead>
+                    <tr>
+                        <th>学号</th>
+                        <th>姓名</th>
+                        <th>专业</th>
+                        <th>班级</th>
+                        <th>总学分</th>
+                        <th>总绩点</th>
+                        <!--th>排名</th-->
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <td id="sid"></td>
+                        <td id="sname"></td>
+                        <td id='smajor'></td>
+                        <td id="sclass"></td>
+                        <td id="totalScore"></td>
+                        <td id="GPA"></td>
+                    </tr>
+                    </tbody>
+                </table></form>
+        </div>
+
+        <div>
+            <h1>课程信息</h1>
+            <form id="S_self_ClassInfor">
+                <table class="table col1" id="courseInfoList">
+                    <thead>
+                    <tr>
+                        <th>课程号</th>
+                        <th>课程名</th>
+                        <th>课程学分</th>
+                        <th>任课老师</th>
+                        <th>成绩</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table></form>
+        </div>
+
+
+    </div>
+</div>
+</html>

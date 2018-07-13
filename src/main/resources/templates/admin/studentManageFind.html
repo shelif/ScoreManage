@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='查找学生')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+
+</div>
+<div th:fragment="content">
+    <div>
+
+        请选择查询条件:
+        <select id="sel" >
+            <option value="sid" type="sId">学生学号</option>
+
+            <option value="smajor" type = 'sMajor'>学生专业</option>
+
+        </select>
+        <input  id="attr"style="margin-left:10px;width:25%" type="text" name="attr"   />
+        <!--url添加后端所需信息，在下个页面解析-->
+        <input  onclick="findStudent()" style="margin-left:100px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit" value="查询">
+        <script>
+            function findStudent(){
+
+                var attrValue =  $("#attr").val();
+                var attrType = $("#sel").find("option:selected").attr("type");
+                if(attrValue == "" )
+                {
+                    alert("数据不能为空");
+                    return;
+                }
+                if(attrType == "sName")
+                    attrValue= encodeURI(attrValue);
+                if(attrType == "sId")
+                {
+                    var re = /^[0-9]+.?[0-9]*/;
+                    if (!re.test(attrValue)) {
+                        alert('学号只能为数字');
+                        return ;
+                    }
+                    if(attrValue.length!=7){
+                        alert("学号必须为7位数字");
+                        return;
+                    }
+                }
+                window.location.href = "/admin/studentFindResult?attrType="+attrType+"&attrValue="+attrValue;
+
+            };
+
+        </script>
+
+    </div>
+</div>
+</html>

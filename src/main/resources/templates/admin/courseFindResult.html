@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='课程查询结果')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+
+
+
+        window.onload = function () {
+
+
+
+
+            var reg1 = new RegExp("(^|&)" + "attrType" + "=([^&]*)(&|$)", "i");
+            var r1 = window.location.search.substr(1).match(reg1);
+            if (r1 != null) var attrType= unescape(r1[2]);
+
+            if(attrType == "cName")
+            { var reg2 = new RegExp("(^|&)" + "attrValue" + "=([^&]*)(&|$)", "i");
+                var r2 = window.location.search.substr(1).match(reg2);
+                if (r2 != null) var attrValue= decodeURI(r2[2]);
+            }
+
+            else
+            {
+                var reg2 = new RegExp("(^|&)" + "attrValue" + "=([^&]*)(&|$)", "i");
+                var r2 = window.location.search.substr(1).match(reg2);
+                if (r2 != null) var attrValue= unescape(r2[2]);
+            }
+
+            console.log("type is:"+ attrType+ "value is"+attrValue );
+            //动态将变量存为json
+            var data={};
+            data[attrType]=attrValue;
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/courseFindResultGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: data,
+                success: function (jsonData) {
+                    var s = "";
+                    if(jsonData.code==0   && jsonData.data[0]!=null) {
+                        for (var i = 0; i < jsonData.data.length; i++) {
+
+                            s += '<tr><td>' + jsonData.data[i].cId + '</td><td>' + jsonData.data[i].cName + '</td><td>' + jsonData.data[i].cScore + '</td></tr>';
+
+                            console.log(s);
+
+
+                        }
+                        $('#courseTable').append(s);
+
+                    }
+                    else
+                        alert("无此课程");
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询课程失败");
+                }
+            });
+        };
+
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div >
+        <table class="table "id="courseTable"  >
+            <thead>
+            <tr>
+                <th style="font-size: 20px" colspan="4">课程信息</th>
+            </tr>
+            <tr>
+                <th>课程号</th>
+                <th>课程名</th>
+                <th>课程学分</th>
+
+            </tr>
+            </thead>
+
+
+        </table>
+    </div>
+</div>

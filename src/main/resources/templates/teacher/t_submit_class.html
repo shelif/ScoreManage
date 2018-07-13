@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/teacher/base (title='开设课程')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        var tcid = " " ;
+
+
+        window.onload = function () {
+
+
+
+
+
+
+
+            $.ajax({
+                type: "GET",
+                url: "/teacher/t_delete_calGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'tid':'tid' },
+                success: function (jsonData) {
+                    var s = "";
+
+
+                    for(var i=0;i < jsonData.data.length; i++) {
+                        tcid = jsonData.data[i].tcid;
+                        s += '<tr><td>' + jsonData.data[i].tcid + '</td><td>' + jsonData.data[i].name
+                            +  '</td><td>' + jsonData.data[i].score +
+                            '</td><td>' + '<button  onclick="deleteCourse('  + jsonData.data[i].tcid +   ')"  class="button button-3d button-primary button-rounded button-tiny" type="submit">删除</button>'
+                            +'</td></tr>';
+
+                        console.log(s);
+
+
+                    }
+                    $('#teacherCourseTable').append(s);
+
+
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询课程失败");
+                }
+            });
+        };
+        //教学班不能以0开头，否则会自动去掉前面的0 如001 变为1 导致不能删除课程
+        //待解决bug*********
+        //发送json进行删除
+        function deleteCourse( i){
+
+
+
+            $.ajax({
+                type: "DELETE",
+                url: "/teacher/t_delete_calDELETE",
+                async: false,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: JSON.stringify({'tcId':tcid}),
+                success: function (jsonData) {
+                    if(jsonData.code==0) {
+
+                        window.location.reload();
+                    }
+                    else
+                        alert("删除失败");
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("不能删除有学生的课程");
+                }
+            });
+        };
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+
+            <div class="container " >
+                课 程 号:  <input id="tcCId" class="form-control" type="text" name="Cno" placeholder="课程号（八位数字）" style="width: 30% ;" /><br>
+                教学班号:  <input id="tcId"type="text" class="form-control" name="Classnum" placeholder="教学班号" style="width: 30%"/><br>
+                上课地点:  <input id="tcLocation"type="text" class="form-control" name="Clocation" placeholder="上课地点" style="width: 30%"/><br>
+                上课时间:  <select style="margin-bottom: 15px" id="tcWeekTime">
+                <option value="1" >周一</option>
+                <option value="2" >周二</option>
+                <option value="3" >周三</option>
+                <option value="4" >周四</option>
+                <option value="5" >周五</option>
+                <option value="6" >周六</option>
+                <option value="7" >周日</option>
+            </select>
+                <select id="tcLesson" style="margin-bottom: 15px">
+                    <option value="1" >第一节课</option>
+                    <option value="2" >第二节课</option>
+                    <option value="3" >第三节课</option>
+                    <option value="4" >第四节课</option>
+
+                </select>
+                <br>
+                课程容量:  <input id="tcCapacity"class="form-control" type="text" name="cCapacity" placeholder="课程容量" style="width: 30%"/><br>
+                <input style="margin-left: 50px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="reset" value="重置">
+                <input onclick="addCourse()" style="margin-left: 180px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="button" value="提交">
+                <!--发送选课信息json数据给后端-->
+                <script>
+                    function addCourse(){
+
+                        var tcCId =  $("#tcCId").val();
+                        var tcId =  $("#tcId").val();
+
+                        var tcLocation =  $("#tcLocation").val();
+                        var tcWeekTime = $("#tcWeekTime").find("option:selected").text();
+                        var tcLesson = $("#tcLesson").find("option:selected").text();
+                        var tcCapacity   =  $("#tcCapacity").val();
+                        if(tcCId == ""|| tcId==""|| tcLocation=="" || tcWeekTime==""|| tcLesson==""|| tcCapacity=="")
+                        {
+                            alert("数据不能为空");
+                            return;
+                        }
+                        var re = /^[0-9]+.?[0-9]*/;
+                        if (!re.test(tcId) || !re.test(tcCId)||!re.test(tcCapacity) ){
+                            alert('只能输入数字');
+                            return ;
+                        }
+                        if(tcId.length!=10){
+                            alert("教学班号必须为10位数字");
+                            return;
+                        }
+                        if(tcCId.length!=8){
+                            alert("课程号必须为8位数字");
+                            return;
+                        }
+                        if(tcCapacity<10){
+                            alert("课程容量必须大于10");
+                            return;
+                        }
+
+
+                        $.ajax({
+                            type: "POST",
+                            url: "/teacher/t_submit_classPOST",
+                            async: false,
+                            contentType: "application/json;charset=UTF-8",
+                            dataType:"json",
+                            data: JSON.stringify({'tcCId':tcCId , 'tcId':tcId, 'tcLocation':tcLocation,
+                                'tcWeekTime':tcWeekTime, 'tcLesson':tcLesson, 'tcCapacity':tcCapacity}),
+                            success: function (jsonData) {
+                                if(jsonData.code == 0)
+                                    alert("添加课程成功");
+                                else
+                                //alert("添加课程失败");
+                                    alert(jsonData.msg);
+                            },
+
+                            error: function (jsonData) {
+                                console.log(jsonData.code);
+                                alert("数据格式有误");
+
+
+                            }
+                        });
+                    };
+
+                </script>
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+</html>
+
+

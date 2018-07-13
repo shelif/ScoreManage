@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/student/base (title='查询选课信息结果')">
+<!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        // 功能：通过ajax请求课程查询结果
+        // 编写人：陈雁彬
+        // 返回字段信息：
+        // data[0] -- 学生信息
+        // data[1] -- 课程信息
+        // data[2] -- 教程信息
+
+
+        window.onload = function () {
+
+
+            var reg1 = new RegExp("(^|&)" + "searchType" + "=([^&]*)(&|$)", "i");
+            var r1 = window.location.search.substr(1).match(reg1);
+            if (r1 != null) var searchType = unescape(r1[2]);
+
+            if (searchType == "2") {
+                var reg2 = new RegExp("(^|&)" + "searchValue" + "=([^&]*)(&|$)", "i");
+                var r2 = window.location.search.substr(1).match(reg2);
+                if (r2 != null) var searchValue = decodeURI(r2[2]);
+            }
+            else {
+                var reg2 = new RegExp("(^|&)" + "searchValue" + "=([^&]*)(&|$)", "i");
+                var r2 = window.location.search.substr(1).match(reg2);
+                if (r2 != null) var searchValue = unescape(r2[2]);
+            }
+
+            // 动态将变量存为json
+            var data = {};
+            data[searchType] = searchValue;
+
+            $.ajax({
+                type: "GET",
+                url: "/student/queryCourses",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                data: data,
+                success: function (jsonData) {
+
+                    if (jsonData.data == null) {
+                        alert("未能查到相关课程信息！");
+                        return;
+                    }
+
+                    var s = "";
+                    var j = 0;
+                    for (var i = 0; i < jsonData.data[0].length; i++) {
+
+                        var nowCourse = jsonData.data[0][i].cId;
+
+                        for (; j < jsonData.data[1].length;) {
+                            if (jsonData.data[1][j].tcCId != nowCourse) {
+                                // 已经进入下一门课程
+                                // nowCourse = jsonData.data[1].tcCId;
+                                break;
+                            }
+                            s += '<tr><td>' + jsonData.data[0][i].cId + '</td><td>' + jsonData.data[0][i].cName + '</td><td>' + jsonData.data[0][i].cScore + '</td>'
+                                + '<td>' + jsonData.data[2][j].tName + '</td><td ' + 'id=\"tabletcid' + j + '\">' + jsonData.data[1][j].tcId + '</td><td>' +
+                                jsonData.data[1][j].tcWeekTime + jsonData.data[1][j].tcLesson + '</td><td>' + jsonData.data[1][j].tcLocation + '</td><td>';
+
+                            s += "<button class=\"button button-3d button-primary button-rounded button-tiny\" onclick='choose(";
+                            s += j;
+                            s += ")'>选课</button>";
+                            s += "</td></tr>";
+                            j++;
+
+                        }
+
+                    }
+                    $('#coursesQueryResult').append(s);
+                },
+                error: function (jsonData) {
+                    console.log(data.code);
+                    alert(data.code);
+                }
+            });
+        };
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <h1>查询课程结果</h1>
+            <p id="chooseCourseResult"></p>
+        </div>
+
+        <table class="table col1" id="coursesQueryResult">
+            <thead>
+            <tr>
+                <th>课程号</th>
+                <th>课程名</th>
+                <th>课程学分</th>
+                <th>任课老师</th>
+                <th>教学班号</th>
+                <th>上课时间</th>
+                <th>上课地点</th>
+                <th>选择</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+
+        <input id="S_search_ResultBackButton" style="margin-left: 75%;margin-top: 20px" class="button button-3d button-primary button-rounded"
+               type="button" value="返回" onclick="javascript:history.back(-1);">
+    </div>
+    <script>
+        function choose(i) {
+//        alert("choose" + i);
+// 加入st表
+            //       alert("choose" + $("#tabletcid" + i).text());
+            var stuInfo = $("#studentInfoStore").text();
+            var tcid = $("#tabletcid" + i).text();
+//
+//
+            $.ajax({
+                type: "GET",
+                url: "/student/chooseCourse",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                data: {"stuInfo": stuInfo, "tcid": tcid},
+                success: function (jsonData) {
+
+                    $("#chooseCourseResult").html(jsonData.msg);
+                },
+                error: function (jsonData) {
+                    console.log(data.code);
+                    alert(data.code);
+                }
+            });
+            //       alert(stuInfo);
+        }
+    </script>
+</div>
+</html>

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='排名详情')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <!--在表格内输出解析的json数据-->
+    <script>
+        window.onload = function () {
+
+
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/studentDetailGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'detail': 'studentDetail'},
+                success: function (jsonData) {
+                    var s = "";
+
+                    for(var i=0;i < jsonData.data.length; i++) {
+
+                        s += '<tr><td>' + jsonData.data[i].sId + '</td><td>' + jsonData.data[i].sName + '</td><td>' + jsonData.data[i].sMajor+ '</td>'
+                            + '<td>' + jsonData.data[i].sClass + '</td>'+'<td></td></tr>';
+
+                        console.log(s);
+
+
+                    }
+                    $('#studentTable').append(s);
+                },
+
+                error: function (jsonData) {
+                    console.log(data.code);
+
+                }
+            });
+        };
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <table class="table " id="studentTable">
+                <thead>
+                <tr>
+                    <th style="font-size: 20px" colspan="4">学生信息</th>
+                </tr>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>专业</th>
+                    <th>班级</th>
+                </tr>
+                </thead>
+
+            </table>
+        </div>
+
+
+    </div>
+</div>
+</html>

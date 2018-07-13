@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.ScDao">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Sc">
+    <id column="sc_c_id" jdbcType="VARCHAR" property="scCId" />
+    <id column="sc_s_id" jdbcType="VARCHAR" property="scSId" />
+    <result column="sc_grade" jdbcType="REAL" property="scGrade" />
+  </resultMap>
+  <sql id="Example_Where_Clause">
+    <where>
+      <foreach collection="oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause">
+    <where>
+      <foreach collection="example.oredCriteria" item="criteria" separator="or">
+        <if test="criteria.valid">
+          <trim prefix="(" prefixOverrides="and" suffix=")">
+            <foreach collection="criteria.criteria" item="criterion">
+              <choose>
+                <when test="criterion.noValue">
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue">
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue">
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue">
+                  and ${criterion.condition}
+                  <foreach close=")" collection="criterion.value" item="listItem" open="(" separator=",">
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List">
+    sc_c_id, sc_s_id, sc_grade
+  </sql>
+  <select id="selectByExample" parameterType="com.example.demo.entity.ScExample" resultMap="BaseResultMap">
+    select
+    <if test="distinct">
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from sc
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null">
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" parameterType="com.example.demo.entity.ScKey" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from sc
+    where sc_c_id = #{scCId,jdbcType=VARCHAR}
+      and sc_s_id = #{scSId,jdbcType=VARCHAR}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="com.example.demo.entity.ScKey">
+    delete from sc
+    where sc_c_id = #{scCId,jdbcType=VARCHAR}
+      and sc_s_id = #{scSId,jdbcType=VARCHAR}
+  </delete>
+  <delete id="deleteByExample" parameterType="com.example.demo.entity.ScExample">
+    delete from sc
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.Sc">
+    insert into sc (sc_c_id, sc_s_id, sc_grade
+      )
+    values (#{scCId,jdbcType=VARCHAR}, #{scSId,jdbcType=VARCHAR}, #{scGrade,jdbcType=REAL}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.Sc">
+    insert into sc
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="scCId != null">
+        sc_c_id,
+      </if>
+      <if test="scSId != null">
+        sc_s_id,
+      </if>
+      <if test="scGrade != null">
+        sc_grade,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="scCId != null">
+        #{scCId,jdbcType=VARCHAR},
+      </if>
+      <if test="scSId != null">
+        #{scSId,jdbcType=VARCHAR},
+      </if>
+      <if test="scGrade != null">
+        #{scGrade,jdbcType=REAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.example.demo.entity.ScExample" resultType="java.lang.Long">
+    select count(*) from sc
+    <if test="_parameter != null">
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map">
+    update sc
+    <set>
+      <if test="record.scCId != null">
+        sc_c_id = #{record.scCId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scSId != null">
+        sc_s_id = #{record.scSId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.scGrade != null">
+        sc_grade = #{record.scGrade,jdbcType=REAL},
+      </if>
+    </set>
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map">
+    update sc
+    set sc_c_id = #{record.scCId,jdbcType=VARCHAR},
+      sc_s_id = #{record.scSId,jdbcType=VARCHAR},
+      sc_grade = #{record.scGrade,jdbcType=REAL}
+    <if test="_parameter != null">
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.Sc">
+    update sc
+    <set>
+      <if test="scGrade != null">
+        sc_grade = #{scGrade,jdbcType=REAL},
+      </if>
+    </set>
+    where sc_c_id = #{scCId,jdbcType=VARCHAR}
+      and sc_s_id = #{scSId,jdbcType=VARCHAR}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.Sc">
+    update sc
+    set sc_grade = #{scGrade,jdbcType=REAL}
+    where sc_c_id = #{scCId,jdbcType=VARCHAR}
+      and sc_s_id = #{scSId,jdbcType=VARCHAR}
+  </update>
+</mapper>

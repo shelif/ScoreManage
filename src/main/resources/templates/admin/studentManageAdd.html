@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='添加学生')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+
+</div>
+<div th:fragment="content">
+    <div>
+        <form id="submitAddStudent"  method="post">
+            学生学号:  <input class="form-control" type="text" name="sid" id="sid"  placeholder="学号" style="width: 30% ;" /><br>
+            学生姓名:  <input class="form-control" type="text" name="sname" id="sname" placeholder="姓名" style="width: 30%"/><br>
+
+            学生专业:  <select id="selectmajor" style="margin-bottom: 15px">
+            <option value="CS">计算机科学与技术</option>
+            <option value="IS">信息安全</option>
+            <option value="IOC">物联网</option>
+
+        </select>
+            <br/>
+
+            学生班级:  <input class="form-control" type="text" name="slcass" id="sclass"placeholder="班级" style="width: 30%"/><br>
+            登陆密码:  <input class="form-control" type="text" name="password" id="password" placeholder="密码" style="width: 30%"/><br>
+
+
+            <button  onclick="addStudent()"  style="margin-left: 180px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit">提交</button>
+            <!--发送json数据给后端-->
+            <script>
+                function addStudent(){
+
+                    var sid =  $("#sid").val();
+                    var sname =  $("#sname").val();
+
+                    var smajor =  $("#selectmajor").val();
+                    var sclass =  $("#sclass").val();
+                    var spassword =   $("#password").val();
+                    if(smajor == ""|| sclass==""|| spassword==""|| sid==""|| sname=="" )
+                    {
+                        alert("数据不能为空");
+                        return;
+                    }
+                    var re = /^[0-9]+.?[0-9]*/;
+                    if (!re.test(sid)) {
+                        alert('只能输入数字');
+                        return ;
+                    }
+                    if(sid.length!=7){
+                        alert("学号必须为7位数字");
+                        return;
+                    }
+                    $.ajax({
+                        type: "POST",
+                        url: "/admin/studentManageAddPOST",
+                        async: false,
+                        contentType: "application/json;charset=UTF-8",
+                        dataType:"json",
+                        data: JSON.stringify({'sId':sid , 'sName':sname, 'sMajor':smajor,'sClass':sclass,'sPassword':spassword }),
+                        success: function (jsonData) {
+                            if(jsonData.code==0)
+                                alert("添加学生成功");
+                            else
+                                alert(jsonData.msg);
+                        },
+
+                        error: function (jsonData) {
+                            console.log(jsonData.code);
+                            alert("数据格式有误");
+
+
+                        }
+                    });
+                };
+
+            </script>
+
+        </form>
+    </div>
+</div>
+</html>

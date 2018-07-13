@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.example.demo.dao.StudentDao" >
+    <resultMap id="studentResultMap" type="Student">
+        <result property="sIQ" column="s_iq_score"/>
+    </resultMap>
+
+    <select id="queryStudent" resultMap="studentResultMap" resultType="com.example.demo.entity.Student">
+        SELECT s_id,s_user_name,s_password,s_name,s_major,s_class,s_total_score,s_gpa,s_iq_score
+        FROM student
+    </select>
+    <select id="queryStudentById" resultMap="studentResultMap" resultType="com.example.demo.entity.Student">
+        SELECT s_id,s_user_name,s_password,s_name,s_major,s_class,s_total_score,s_gpa,s_iq_score
+        FROM student
+        WHERE
+        s_id=#{sId}
+    </select>
+    <select id="queryStudentByClass" resultMap="studentResultMap" resultType="com.example.demo.entity.Student">
+        SELECT s_id,s_user_name,s_password,s_name,s_major,s_class,s_total_score,s_gpa,s_iq_score
+        FROM student
+        WHERE
+        s_class=#{sClass}
+    </select>
+    <select id="queryStudentByMajor" resultMap="studentResultMap" resultType="com.example.demo.entity.Student">
+        SELECT s_id,s_user_name,s_password,s_name,s_major,s_class,s_total_score,s_gpa,s_iq_score
+        FROM student
+        WHERE
+        s_major=#{sMajor}
+    </select>
+    <select id="queryStudentByName" resultMap="studentResultMap" resultType="com.example.demo.entity.Student">
+        SELECT s_id,s_user_name,s_password,s_name,s_major,s_class,s_total_score,s_gpa,s_iq_score
+        FROM student
+        WHERE
+        s_name=#{sName}
+    </select>
+    <insert id="insertStudent" useGeneratedKeys="false" keyProperty="StudentId" keyColumn="s_id" parameterType="com.example.demo.entity.Student">
+        INSERT INTO
+        student(s_id,s_user_name,s_password,s_name,s_major,s_class,s_total_score,s_gpa,s_iq_score)
+        VALUES
+        (#{sId},#{sUsername},#{sPassword},#{sName},#{sMajor},#{sClass},#{sTotalScore},#{sGpa},#{sIQ})
+    </insert>
+    <update id="updateStudent" parameterType="com.example.demo.entity.Student">
+        update student
+        <set>
+            <if test="sUsername!=null">s_user_name=#{sUsername},</if>
+            <if test="sPassword!=null">s_password=#{sPassword},</if>
+            <if test="sName!=null">s_name=#{sName},</if>
+            <if test="sMajor!=null">s_major=#{sMajor},</if>
+            <if test="sClass!=null">s_class=#{sClass},</if>
+            <if test="sTotalScore!=null">s_total_score=#{sTotalScore,jdbcType=REAL},</if>
+            <if test="sGpa!=null">s_gpa=#{sGpa,jdbcType=REAL},</if>
+            <if test="sIQ!=null">s_iq_score=#{sIQ,jdbcType=REAL}</if>
+        </set>
+        WHERE s_id=#{sId}
+    </update>
+    <delete id="deleteStudent">
+        DELETE  FROM
+        student
+        WHERE
+        s_id=
+        #{sId}
+    </delete>
+</mapper>

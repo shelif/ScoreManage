@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/teacher/base (title='删除课程结果')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <div class="table_perinfo" >
+
+                <table class="table">
+                    <tr>
+                        <th>课程号</th>
+                        <th>课程名</th>
+                        <th>课程学分</th>
+                </table>
+                <br>
+                <p2>课程删除成功!</p2>
+                <a  href="t_delete_result.html"style="margin-left: 380px;margin-top: 5px" class="button button-3d button-primary button-rounded button-tiny" role="button">确认删除</a>
+            </div>
+            <!--显示删除后的课程列表，并且提示课程删除成功-->
+
+
+
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+</html>
+
+

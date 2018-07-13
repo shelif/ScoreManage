@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/teacher/base (title='查看课程')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        var tcid = " " ;
+
+
+        window.onload = function () {
+
+
+
+
+
+
+
+            $.ajax({
+                type: "GET",
+                url: "/teacher/t_delete_calGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'tid':'tid' },
+                success: function (jsonData) {
+                    var s = "";
+
+
+                    for(var i=0;i < jsonData.data.length; i++) {
+                        tcid = jsonData.data[i].tcid;
+                        s += '<tr><td>' + jsonData.data[i].tcid + '</td><td>' + jsonData.data[i].name
+                            +  '</td><td>' + jsonData.data[i].score +
+                            '</td><td>' + '<button  onclick="deleteCourse('  + jsonData.data[i].tcid +   ')"  class="button button-3d button-primary button-rounded" type="submit">删除</button>'
+                            +'</td></tr>';
+
+                        console.log(s);
+
+
+                    }
+                    $('#teacherCourseTable').append(s);
+
+
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询课程失败");
+                }
+            });
+        };
+        //教学班不能以0开头，否则会自动去掉前面的0 如001 变为1 导致不能删除课程
+        //待解决bug*********
+        //发送json进行删除
+        function deleteCourse( i){
+
+
+
+            $.ajax({
+                type: "DELETE",
+                url: "/teacher/t_delete_calDELETE",
+                async: false,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: JSON.stringify({'tcId':tcid}),
+                success: function (jsonData) {
+                    if(jsonData.code==0) {
+
+                        window.location.reload();
+                    }
+                    else
+                        alert("删除失败");
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("不能删除有学生的课程");
+                }
+            });
+        };
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+
+
+                请选择查询条件:
+                <select id="sel" >
+                    <option value="cid" type ="cId">课程号</option>
+                    <option value="cname" type ="cName">课程名称</option>
+                    <option value="cscore" type ="cScore">课程学分</option>
+
+                </select>
+                <input  style="margin-left:10px;width: 25% " type="text" name="attr" id="attr" >
+
+
+                <input onclick="findCourse()" style="margin-left:100px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit" value="查询">
+                <!--url加入所选类型和数值 在下一个页面解-->
+                <script>
+                    function findCourse(){
+
+                        var attrValue =  $("#attr").val();
+                        var attrType = $("#sel").find("option:selected").attr("type");
+                        if(attrValue==""){
+                            alert("数据不能为空");
+                            return;
+                        }
+                        if(attrType == "cName")
+                            attrValue= encodeURI(attrValue);
+                        if(attrType == "cId")
+                        {
+                            var re = /^[0-9]+.?[0-9]*/;
+                            if (!re.test(attrValue)) {
+                                alert('课程号只能为数字');
+                                return ;
+                            }
+                            if(attrValue.length!=8){
+                                alert("课程号必须为8位数字");
+                                return;
+                            }
+                        }
+
+                        window.location.href = "/teacher/t_search_result?attrType="+attrType+"&attrValue="+attrValue;
+
+                    };
+
+                </script>
+
+
+        </div>
+
+
+
+    </div>
+</div>
+</html>
+
+

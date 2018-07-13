@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='课程修改结果')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+
+
+
+
+        window.onload = function () {
+
+
+
+
+            var reg1 = new RegExp("(^|&)" + "cid" + "=([^&]*)(&|$)", "i");
+            var r1 = window.location.search.substr(1).match(reg1);
+            if (r1 != null) var cId= unescape(r1[2]);
+
+
+            console.log("cid is:"+ cId );
+
+
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/courseModifyResultGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'cId':cId},
+                success: function (jsonData) {
+                    var s = "";
+                    console.log(jsonData);
+                    if(jsonData.code==0   && jsonData.data!=null) {
+
+
+                        s += '<tr><td>' + jsonData.data.cId + '</td><td>' + jsonData.data.cName + '</td><td>' + jsonData.data.cScore + '</td></tr>';
+
+
+                        console.log(s);
+
+
+                        $('#inputfield').before(s);
+
+                    }
+                    else
+                        alert("无此课程");
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询课程失败");
+                }
+            });
+        };
+
+
+
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <table class="table " id="courseTable" >
+                <thead>
+                <tr>
+                    <th style="font-size: 20px" colspan="4">课程信息</th>
+                </tr>
+                <tr>
+                    <th>课程号</th>
+                    <th>课程名</th>
+                    <th>课程学分</th>
+
+                </tr>
+                </thead>
+                <tr id="inputfield"><td>  ------
+                </td> <td> <input   type="text"   style="width: 60% " id= "cName">
+                </td> <td> <input   type="text"   style="width: 60% " id= "cScore">
+
+                </td></tr>;
+            </table>
+        </div>
+
+        <input onclick="modifyCourse()" type="button" value="确定修改" class="button button-3d button-primary button-rounded" >
+        <script>
+            function modifyCourse(){
+                alert("1111");
+
+                var reg1 = new RegExp("(^|&)" + "cid" + "=([^&]*)(&|$)", "i");
+                var r1 = window.location.search.substr(1).match(reg1);
+                if (r1 != null) var cId= unescape(r1[2]);
+
+
+                var cName =  $("#cName").val();
+
+                var cScore = $("#cScore").val();
+
+                $.ajax({
+                    type: "PUT",
+                    url: "/admin/courseModifyResultPUT",
+                    async: false,
+                    contentType: "application/json;charset=UTF-8",
+                    dataType:"json",
+                    data: JSON.stringify({'cId':cId , 'cName':cName,'cScore':cScore }),
+                    success: function (jsonData) {
+                        if(jsonData.code==0)
+                            window.location.reload();
+                        else
+                            alert("修改课程失败");
+                    },
+
+                    error: function (jsonData) {
+                        console.log(jsonData.code);
+                        alert("数据格式有误");
+
+
+                    }
+                });
+            };
+
+        </script>
+    </div>
+</div>
+</html>

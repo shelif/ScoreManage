@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='计算总学分和GPA')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+</div>
+<div th:fragment="content">
+
+    <h2>点击下面的按钮，计算学生的总学分和GPA</h2>
+    <button class="button button-3d button-primary button-rounded" onclick="calcScore()">计算</button>
+    <script>
+        function calcScore() {
+            $.ajax({
+                type: "GET",
+                url: "/admin/scoreCalcDo",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {},
+                success: function (jsonData) {
+                    alert("学生总学分和GPA计算完成！");
+                },
+                error: function (jsonData) {
+                    console.log(data.code);
+                    alert(data.code);
+                }
+            });
+        }
+
+    </script>
+</div>
+</html>

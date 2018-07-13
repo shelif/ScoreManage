@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='查找教师结果')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+
+
+
+        window.onload = function () {
+
+
+
+
+            var reg1 = new RegExp("(^|&)" + "attrType" + "=([^&]*)(&|$)", "i");
+            var r1 = window.location.search.substr(1).match(reg1);
+            if (r1 != null) var attrType= unescape(r1[2]);
+
+            if(attrType == "tName")
+            { var reg2 = new RegExp("(^|&)" + "attrValue" + "=([^&]*)(&|$)", "i");
+                var r2 = window.location.search.substr(1).match(reg2);
+                if (r2 != null) var attrValue= decodeURI(r2[2]);
+            }
+
+            else
+            {
+                var reg2 = new RegExp("(^|&)" + "attrValue" + "=([^&]*)(&|$)", "i");
+                var r2 = window.location.search.substr(1).match(reg2);
+                if (r2 != null) var attrValue= unescape(r2[2]);
+            }
+
+            console.log("type is:"+ attrType+ "value is"+attrValue );
+            //动态将变量存为json
+            var data={};
+            data[attrType]=attrValue;
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/teacherFindResultGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: data,
+                success: function (jsonData) {
+                    var s = "";
+                    if(jsonData.code==0   && jsonData.data[0]!=null) {
+                        for (var i = 0; i < jsonData.data.length; i++) {
+
+                            s += '<tr><td>' + jsonData.data[i].tId + '</td><td>' + jsonData.data[i].tName + '</td></tr>';
+
+                            console.log(s);
+
+
+                        }
+                        $('#teacherTable').append(s);
+
+                    }
+                    else
+                        alert("无此教师");
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询教师失败");
+                }
+            });
+        };
+
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <table class="table "id="teacherTable" >
+            <thead>
+            <tr>
+                <th style="font-size: 20px" colspan="4">教师信息</th>
+            </tr>
+            <tr>
+                <th>工号</th>
+                <th>姓名</th>
+
+            </tr>
+            </thead>
+
+        </table>
+    </div>
+</div>
+</html>

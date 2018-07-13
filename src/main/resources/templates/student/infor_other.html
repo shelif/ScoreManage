@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/student/base (title='查询他人信息')">
+<!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        请选择查询条件:
+        <select id="sel">
+            <option value="1">学号</option>
+            <option value="2">姓名</option>
+        </select>
+
+        <input id="searchValue" style="margin-left:10px;width:25%" type="text" name="attr"/>
+
+
+        <!-- 功能：跳转到查询他人信息的页面，携带搜索的条件-->
+        <!-- 编写人：陈雁彬-->
+        <!-- 字段详细信息：-->
+        <!-- $("#sel option:selected").val(); - 查询的条件 -->
+        <!-- $("#searchValue").val() - 查询的值 -->
+        <input onclick="findCourses()" class="button button-3d button-primary button-rounded" style="margin-left:100px;"
+               type="submit"
+               value="查询">
+        <script>
+            function findCourses() {
+                var searchType = $("#sel option:selected").val();
+                var searchValue = $("#searchValue").val();
+                var re = /^[0-9]+.?[0-9]*/;
+                if (searchType == 1 && !re.test(searchValue)) {
+                    alert('学号只能输入数字');
+                    return;
+
+                }
+                if (searchType == 1 && searchValue.length != 7) {
+                    alert("学号必须为7位数字");
+                    return;
+                }
+
+                searchValue = encodeURI(searchValue);
+                window.location.href = "/student/queryOtherInfo?searchType=" + searchType + "&searchValue=" + searchValue;
+            }
+
+        </script>
+    </div>
+</div>
+</html>

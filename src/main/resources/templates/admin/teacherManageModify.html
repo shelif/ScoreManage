@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='修改教师')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+
+</div>
+<div th:fragment="content">
+    <div>
+
+        请输入修改教师信息:<br/>
+        教师工号:  <input type="text" name="tid" id="tid" placeholder="工号" style="width: 30% ;" />
+
+
+        <input onclick="modifyTeacher()" style="margin-left: 180px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit" value="修改">
+    </div>
+    <script>
+        function modifyTeacher(){
+
+            var tid =  $("#tid").val();
+
+            if(tid == "")
+            {
+                alert("数据不能为空");
+                return;
+            }
+            var re = /^[0-9]+.?[0-9]*/;
+            if (!re.test(tid)) {
+                alert('只能输入数字');
+                return ;
+            }
+            if(tid.length!=9){
+                alert("工号必须为9位数字");
+                return;
+            }
+
+            window.location.href = "/admin/teacherModifyResult?tid="+tid;
+
+        };
+
+    </script>
+</div>
+</html>

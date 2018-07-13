@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='教师详情')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        window.onload = function () {
+
+            var para={
+                'detail': 'teacherDetail'
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/teacherDetailGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'detail': 'teacherDetail'},
+                success: function (jsonData) {
+                    var s = "";
+
+                    for(var i=0;i < jsonData.data.length; i++) {
+
+                        s += '<tr><td>' + jsonData.data[i].tId + '</td><td>' + jsonData.data[i].tName + '</td>'
+                            +'</tr>';
+
+                        console.log(s);
+
+
+                    }
+                    $('#teacherTable').append(s);
+                },
+
+                error: function (jsonData) {
+                    console.log(data.code);
+                    alert(data.code);
+                }
+            });
+        };
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <table class="table "id="teacherTable" >
+            <thead>
+            <tr>
+                <th style="font-size: 20px" colspan="4">教师信息</th>
+            </tr>
+            <tr>
+                <th>工号</th>
+                <th>姓名</th>
+
+            </tr>
+            </thead>
+
+        </table>
+    </div>
+</div>
+</html>

@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/student/base (title='学生主页')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        window.onload = function () {
+            $.ajax({
+                type: "GET",
+                url: "/student/homeGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                data: {'code': '0'},
+                success: function (jsonData) {
+                    var s = "";
+                    $("#sid").html(jsonData.data.sId);
+                    $("#sname").html(jsonData.data.sName);
+                    $("#smajor").html(jsonData.data.sMajor);
+                    $("#sclass").html(jsonData.data.sClass);
+
+                    $("#totalScore").html(jsonData.data.sTotalScore);
+                    $("#GPA").html(jsonData.data.sGpa);
+
+                    $("#sayStudentHello").html("学生 " + jsonData.data.sId + "，您好！");
+                },
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                }
+            });
+        };
+    </script>
+</div>
+<div th:fragment="content">
+    <form id="S_home_StatusInfor">
+        <div>
+            <table class="table col1">
+                <thead>
+                <tr>
+                    <th style="font-size: 20px" colspan="4">学籍信息</th>
+                </tr>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>专业</th>
+                    <th>班级</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="sid"></td>
+                    <td id="sname"></td>
+                    <td id="smajor"></td>
+                    <td id="sclass"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+
+    <form id="S_home_GradeInfor">
+        <div style="padding-top: 50px">
+            <table class="table col1">
+                <thead>
+                <tr>
+                    <th style="font-size: 20px" colspan="3">成绩信息</th>
+                </tr>
+                <tr>
+                    <th>总学分</th>
+                    <th>总绩点</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td id="totalScore">4.00</td>
+                    <td id="GPA">3.33</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </form>
+
+</div>
+</html>
+
+

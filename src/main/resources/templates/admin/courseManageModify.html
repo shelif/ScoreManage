@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='课程修改')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+
+</div>
+<div th:fragment="content">
+    <div>
+        请输入修改课程信息:<br/>
+
+        课程号:  <input type="text" name="cid" id="cid" placeholder="课程号" style="width: 30% ;" />
+
+
+        <input onclick="modifyCourse()" style="margin-left: 180px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit" value="修改">
+    </div>
+    <script>
+        function modifyCourse(){
+
+            var cid =  $("#cid").val();
+            if(cid == "" )
+            {
+                alert("数据不能为空");
+                return;
+            }
+            var re = /^[0-9]+.?[0-9]*/;
+            if (!re.test(cid)) {
+                alert('课程号只能为数字');
+                return ;
+            }
+            if(cid.length!=8){
+                alert("课程号必须为8位数字");
+                return;
+            }
+            window.location.href = "/admin/courseModifyResult?cid="+cid;
+
+        };
+
+    </script>
+</div>
+</html>

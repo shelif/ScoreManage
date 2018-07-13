@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='删除学生')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+
+</div>
+<div th:fragment="content">
+    <!-- 输入学号，删除学生，如果学号不存在，提示信息 -->
+
+    <div >
+        <form id="submitDeleteStudent"  method="post">
+            请输入删除学生信息:<br/>
+            学生学号:  <input type="text" name="sid" id="sid"  placeholder="学号" style="width: 30% ;" />
+
+
+            <input  onclick="deleteStudent()" style="margin-left: 180px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit" value="删除">
+        </form>
+    </div>
+
+    <!--发送json数据给后端-->
+    <script>
+        function deleteStudent(){
+            var sid = $("#sid").val();
+            if(sid == "" )
+            {
+                alert("数据不能为空");
+                return;
+            }
+            var re = /^[0-9]+.?[0-9]*/;
+            if (!re.test(sid)) {
+                alert('只能输入数字');
+                return ;
+            }
+            if(sid.length!=7){
+                alert("学号必须为7位数字");
+                return;
+            }
+            $.ajax({
+                type: "DELETE",
+                url: "/admin/studentManageDeleteDELETE",
+                async: false,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: JSON.stringify({'sId':sid}),
+                success: function (jsonData) {
+                    if(jsonData.code==0)
+                        alert("删除学生成功!");
+                    else
+                        alert(jsonData.msg);
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+
+                }
+            });
+        };
+
+    </script>
+
+</div>
+</html>
+

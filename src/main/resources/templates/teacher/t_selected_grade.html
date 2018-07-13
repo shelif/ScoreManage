@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/teacher/base (title='登记成绩')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        var info = new Array();
+        var length;
+        var arraydata;
+        window.onload = function () {
+
+
+
+
+            var reg1 = new RegExp("(^|&)" + "tcid" + "=([^&]*)(&|$)", "i");
+            var r1 = window.location.search.substr(1).match(reg1);
+            if (r1 != null) var tcid= unescape(r1[2]);
+
+
+
+            console.log("tcid is:"+ tcid );
+            //动态将变量存为json
+            var data={};
+
+
+            $.ajax({
+                type: "GET",
+                url: "/teacher/t_selected_gradeGET",
+                async: false,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'tcId':tcid},
+                success: function (jsonData) {
+                    var s = "";
+                    arraydata = jsonData;
+                    length = jsonData.data.length;
+                    for(var i=0;i < jsonData.data.length; i++) {
+                        if(jsonData.data[i].scGrade==0)  jsonData.data[i].scGrade='未填写成绩';
+                        s += '<tr><td>' + jsonData.data[i].sId + '</td><td>' + jsonData.data[i].cName
+                            +'</td><td>' + jsonData.data[i].scGrade
+
+                            +'</td></tr>';
+
+                        console.log(s);
+
+
+                    }
+                    $('#scoreTable').append(s);
+
+
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询学生失败");
+                }
+            });
+        };
+
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+
+            <div class="table_perinfo" >
+
+                <table class="table" id="scoreTable">
+                    <tr>
+                        <th>学号</th>
+                        <th>姓名</th>
+                        <th>成绩</th>
+                    </tr>
+                </table>
+                <!--导出功能-->
+                <a id="dlink"  style="display:none;"></a>
+                <input  onclick="tableToExcel('scoreTable', '成绩', 'score.xls')"  style="margin-left: 50px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="button" value="导出">
+                <input type="button" name="back" style="margin-left: 70%;margin-top: 20px" class="button button-3d button-primary button-rounded" onclick="javascript:history.back(-1);" value="返回">
+            </div>
+
+            <script type="text/javascript">
+                var tableToExcel = (function () {
+                    var uri = 'data:application/vnd.ms-excel;base64,',
+                        template = '<html xmlns:o="urn:schemas-microsoft-com:office:office" xmlns:x="urn:schemas-microsoft-com:office:excel" xmlns="http://www.w3.org/TR/REC-html40"><head><!--[if gte mso 9]><xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet><x:Name>{worksheet}</x:Name><x:WorksheetOptions><x:DisplayGridlines/></x:WorksheetOptions></x:ExcelWorksheet></x:ExcelWorksheets></x:ExcelWorkbook></xml><![endif]--></head><body><table>{table}</table></body></html>',
+                        base64 = function (s) { return window.btoa(unescape(encodeURIComponent(s))) },
+                        format = function (s, c) { return s.replace(/{(\w+)}/g, function (m, p) { return c[p]; }) };
+                    return function (table, name, filename) {
+                        if (!table.nodeType) table = document.getElementById(table)
+                        var ctx = { worksheet: name || 'Worksheet', table: table.innerHTML }
+
+                        document.getElementById("dlink").href = uri + base64(format(template, ctx));
+                        document.getElementById("dlink").download = filename;
+                        document.getElementById("dlink").click();
+                    }
+                })()
+            </script>
+        </div>
+
+
+
+    </div>
+</div>
+</html>
+

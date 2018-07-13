@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='排名')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        var currPage = 0;
+        var itemsPerPage = 10;
+        var totalPage;
+
+        var allContent;
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <!--<input style="margin-left: 180px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit" value="进行排名"onclick="ranking();" >-->
+        <!--<br/><br/><br/>-->
+        <!--<div id="d" style="display: none;" >排名完成!</div>-->
+        <!--<script type="text/javascript">-->
+        <!--function ranking(){-->
+        <!--document.getElementById("d").style.display = "block";-->
+        <!--}-->
+        <!--/* 只有显示 排名完成 功能 */-->
+        <!--</script>-->
+
+        请选择查询专业:
+        <select id="sel" >
+            <option value="1" >计算机科学与技术</option>
+            <option value="2" >物联网工程</option>
+            <option value="3" >信息安全</option>
+            <!--option value="3" >课程学分</option-->
+            <!--option value="4" >学生专业</option-->
+            <!--option value="5" >任课教师</option-->
+            <!--option value="6" >教学班号</option-->
+            <!--option value="7" >上课地点</option-->
+        </select>
+
+        <!--<input  id="searchValue"style="margin-left:10px;width:25%" type="text" name="attr"   />-->
+
+
+        <input  onclick="findCourses()" style="margin-left:100px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit" value="查询">
+        <script>
+            function findCourses(){
+                var searchType = $("#sel option:selected").val();
+                // window.location.href = "/admin/calculateRankInfo?searchType="+searchType;
+                var data={};
+                data[searchType]="needQuerying";
+
+                $.ajax({
+                    type: "GET",
+                    url: "/admin/calculateRankInfo",
+                    async: true,
+                    contentType: "application/json;charset=UTF-8",
+                    dataType:"json",
+                    data: data,
+                    success: function (jsonData) {
+
+                        allContent = jsonData.data;
+
+                        totalPage = Math.ceil(allContent.length / itemsPerPage);
+
+                        currPage = 0;
+
+                        showTable();
+//                        var s = "";
+//
+//                        for(var i = 0 ; i < jsonData.data.length; i++) {
+//                            s += '<tr><td>' + jsonData.data[i].sId + '</td><td>' + jsonData.data[i].sName + '</td><td>' + jsonData.data[i].sMajor+ '</td>'
+//                                + '<td>' + jsonData.data[i].sClass + '</td><td>' + jsonData.data[i].sTotalScore+ '</td><td>' +
+//
+//                                jsonData.data[i].sGpa + '</td></tr>';
+//                            console.log(s);
+//                        }
+//
+//                    //    $('#showRankInfo')
+//                        $("#showRankInfo tr:not(:first)").empty("");
+//                        $('#showRankInfo').append(s);
+                    },
+                    error: function (jsonData) {
+                        console.log(data.code);
+
+                    }
+                });
+            }
+
+        </script>
+
+        <div style="margin-top: 50px;">
+            <h1>查询结果</h1>
+
+
+            <br>
+                <table class="table "  id="showRankInfo">
+                    <thead>
+                    <tr>
+                        <th>学号</th>
+                        <th>姓名</th>
+                        <th>专业</th>
+                        <th>班级</th>
+                        <th>总学分</th>
+                        <th>绩点</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+
+            <button onclick="headPage()" class="button button-3d button-primary button-rounded button-tiny">首页</button>&nbsp;
+            <button onclick="backPage()" class="button button-3d button-primary button-rounded button-tiny">上一页</button>&nbsp;
+
+            <button onclick="nextPage()" class="button button-3d button-primary button-rounded button-tiny">下一页</button>&nbsp;
+            <button onclick="tailPage()" class="button button-3d button-primary button-rounded button-tiny">尾页</button>
+
+            <span id="textAboutPages"></span>
+
+            <br>
+                <input id="S_other_ResultBackButton" style="margin-left: 75%;margin-top: 20px" class="button button-3d button-primary button-rounded" type="button" value="返回" onclick="javascript:history.back(-1);">
+
+            </div>
+        </div>
+
+    <script>
+        function showTable() {
+            var s = "";
+
+            for(var i = itemsPerPage * currPage;
+                i < ((itemsPerPage * currPage + itemsPerPage < allContent.length)?
+                    itemsPerPage * currPage+ itemsPerPage : allContent.length); i++){
+                s += '<tr><td>' + allContent[i].sId + '</td><td>' + allContent[i].sName + '</td><td>' + allContent[i].sMajor+ '</td>'
+                    + '<td>' + allContent[i].sClass + '</td><td>' + allContent[i].sTotalScore+ '</td><td>' +
+
+                    allContent[i].sGpa + '</td></tr>';
+                console.log(s);
+            }
+            $("#showRankInfo tr:not(:first)").empty("");
+            $('#showRankInfo').append(s);
+
+            $("#textAboutPages").html("当前页：" + (currPage + 1) + "/总页数：" + totalPage);
+        }
+    </script>
+
+    <script>
+        function nextPage() {
+            currPage++;
+            if(currPage > totalPage - 1) currPage--;
+
+            showTable()
+        }
+    </script>
+
+    <script>
+        function backPage() {
+            currPage--;
+            if(currPage < 0) currPage++;
+
+            showTable();
+        }
+    </script>
+
+    <script>
+        function headPage() {
+            currPage = 0;
+
+            showTable();
+        }
+    </script>
+
+    <script>
+        function tailPage() {
+            currPage = totalPage - 1;
+
+            showTable();
+        }
+    </script>
+
+</div>
+</html>

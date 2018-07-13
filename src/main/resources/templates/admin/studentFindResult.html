@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='学生查找结果')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+
+
+
+        window.onload = function () {
+
+
+
+
+            var reg1 = new RegExp("(^|&)" + "attrType" + "=([^&]*)(&|$)", "i");
+            var r1 = window.location.search.substr(1).match(reg1);
+            if (r1 != null) var attrType= unescape(r1[2]);
+
+            var reg2 = new RegExp("(^|&)" + "attrValue" + "=([^&]*)(&|$)", "i");
+            var r2 = window.location.search.substr(1).match(reg2);
+            if (r2 != null) var attrValue= unescape(r2[2]);
+            console.log("type is:"+ attrType+ "value is"+attrValue );
+            //动态将变量存为json
+            var data={};
+            data[attrType]=attrValue;
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/studentFindResultGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: data,
+                success: function (jsonData) {
+                    var s = "";
+                    if(jsonData.code==0 && jsonData.data[0]!=null) {
+                        for (var i = 0; i < jsonData.data.length; i++) {
+
+                            s += '<tr><td>' + jsonData.data[i].sId + '</td><td>' + jsonData.data[i].sName + '</td><td>' + jsonData.data[i].sMajor + '</td>'
+                                + '<td>' + jsonData.data[i].sClass + '</td><td>' + jsonData.data[i].sTotalScore + ' </td><td>' +
+                                jsonData.data[i].sGpa + '</td><td>' + jsonData.data[i].sIQ + '</td></tr>';
+
+                            console.log(s);
+
+
+                        }
+                        $('#studentTable').append(s);
+
+                    }
+                    else
+                        alert("无此学生");
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询学生失败");
+                }
+            });
+        };
+
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <table class="table "id="studentTable" >
+            <thead>
+            <tr>
+                <th style="font-size: 20px" colspan="4">学籍信息</th>
+            </tr>
+            <tr>
+                <th>学号</th>
+                <th>姓名</th>
+                <th>专业</th>
+                <th>班级</th>
+                <th>总学分</th>
+                <th>绩点</th>
+                <th>最终智育成绩</th>
+            </tr>
+            </thead>
+
+        </table>
+    </div>
+</div>
+</html>

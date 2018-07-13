@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='添加课程')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+
+</div>
+<div th:fragment="content">
+    <form id="submitAddCourse" method="post">
+        课程号:  <input class="form-control" type="text" name="cid" id="cid" placeholder="课程号" style="width: 30% ;" /><br>
+        课程名称:  <input type="text" class="form-control" name="cname" id="cname" placeholder="名称" style="width: 30%"/><br>
+
+        课程学分:  <input type="text" class="form-control" name="cscore" id="cscore" placeholder="学分" style="width: 30%"/><br>
+
+
+
+        <input onclick="addCourse()" style="margin-left: 180px;margin-top: 20px" class="button button-3d button-primary button-rounded" type="submit" value="提交">
+        <script>
+            function addCourse(){
+
+                var cid =  $("#cid").val();
+                var cname =  $("#cname").val();
+
+                var cscore =  $("#cscore").val();
+                var reg = /^d{1,8}$/;
+                if(cid == ""|| cname==""|| cscore=="" )
+                {
+                    alert("数据不能为空");
+                    return;
+                }
+                var re = /^[0-9]+.?[0-9]*/;
+                if (!re.test(cid)) {
+                    alert('只能输入数字');
+                    return ;
+                }
+                if(cid.length!=8){
+                    alert("课程号必须为8位数字");
+                    return;
+                }
+                re =  /^[0-9]+.?[0-9]*$/;
+                if(!re.test(cscore))
+                {
+                    alert("学分必须为正小数");
+                    return;
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/admin/courseManageAddPOST",
+                    async: false,
+                    contentType: "application/json;charset=UTF-8",
+                    dataType:"json",
+                    data: JSON.stringify({'cId':cid , 'cName':cname, 'cScore':cscore}),
+                    success: function (jsonData) {
+                        if(jsonData.code==0 )
+                        {
+                            var r=confirm("是否确定添加课程");
+                            if (r==true)
+                            {
+                                alert("添加课程成功!");
+                            }
+
+
+                        }
+                        else
+                            alert(jsonData.msg);
+                    },
+
+                    error: function (jsonData) {
+                        console.log(jsonData.code);
+                        alert("数据格式有误");
+
+
+                    }
+                });
+            };
+
+        </script>
+
+    </form>
+</div>
+</html>

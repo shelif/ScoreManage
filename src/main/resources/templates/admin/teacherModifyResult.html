@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='修改教师结果')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+
+
+        window.onload = function () {
+
+
+            var reg1 = new RegExp("(^|&)" + "tid" + "=([^&]*)(&|$)", "i");
+            var r1 = window.location.search.substr(1).match(reg1);
+            if (r1 != null) var tId = unescape(r1[2]);
+
+
+            console.log("tid is:" + tId);
+
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/teacherModifyResultGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                data: {'tId': tId},
+                success: function (jsonData) {
+                    var s = "";
+
+
+                    if (jsonData.code == 0 && jsonData.data != null) {
+
+                        s += '<tr><td>' + jsonData.data.tId + '</td><td>' + jsonData.data.tName + '</td></tr>';
+
+
+                        console.log(s);
+
+
+                        $('#inputfield').before(s);
+
+                    }
+                    else
+                        alert("无此教师");
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询教师失败");
+                }
+            });
+        };
+
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <table class="table ">
+                <thead>
+                <tr>
+                    <th style="font-size: 20px" colspan="4">教师信息</th>
+                </tr>
+                <tr>
+                    <th>工号</th>
+                    <th>姓名</th>
+
+                </tr>
+                </thead>
+                <tr id="inputfield">
+                    <td> ------
+                    </td>
+                    <td><input type="text" style="width: 60% " id="tName">
+
+                    </td>
+                </tr>
+                ;
+
+            </table>
+        </div>
+        <input onclick="modifyTeacher()" type="button" value="确定修改" class="button button-3d button-primary button-rounded">
+
+        <script>
+            function modifyTeacher() {
+
+
+                var reg1 = new RegExp("(^|&)" + "tid" + "=([^&]*)(&|$)", "i");
+                var r1 = window.location.search.substr(1).match(reg1);
+                if (r1 != null) var tId = unescape(r1[2]);
+                var tName = $("#tName").val();
+
+                $.ajax({
+                    type: "PUT",
+                    url: "/admin/teacherModifyResultPUT",
+                    async: false,
+                    contentType: "application/json;charset=UTF-8",
+                    dataType: "json",
+                    data: JSON.stringify({'tId': tId, 'tName': tName}),
+                    success: function (jsonData) {
+                        if (jsonData.code == 0)
+                            window.location.reload();
+                        else
+                            alert("修改教师失败");
+                    },
+
+                    error: function (jsonData) {
+                        console.log(jsonData.code);
+                        alert("数据格式有误");
+
+
+                    }
+                });
+            };
+
+        </script>
+    </div>
+</div>
+</html>

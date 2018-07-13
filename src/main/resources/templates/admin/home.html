@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='教师主页')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        window.onload = function () {
+
+            var para = {
+                'detail': 'courseDetail'
+            };
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/homeGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType: "json",
+                data: {'detail': 'courseDetail'},
+                success: function (jsonData) {
+                    var s = "";
+                    s = '当前系统共有学生数：' + jsonData.data[0];
+                    $('#studentCount').text(s);
+
+
+                    s = '当前系统共有教师数：' + jsonData.data[1];
+                    $('#teacherCount').text(s);
+
+
+                    s = '当前系统共有课程数：' + jsonData.data[2];
+                    $('#courseCount').text(s);
+                },
+
+                error: function (jsonData) {
+                    console.log(data.code);
+
+                }
+            });
+        };
+
+    </script>
+</div>
+<div th:fragment="content">
+
+
+
+        <div>
+            <table class="table">
+                <thead>
+                <h2>系统基本信息</h2>
+                </thead>
+
+
+                <tr>
+                    <td id="studentCount">当前系统共有学生数：</td>
+                    <td><a class="button button-3d button-primary button-rounded" href="/admin/studentDetail"
+                           role="button">查看详情</a></td>
+                </tr>
+
+
+                <tr>
+                    <td id="teacherCount">当前系统共有教师数： 3</td>
+                    <td><a class="button button-3d button-primary button-rounded" href="/admin/teacherDetail"
+                           role="button">查看详情</a></td>
+                </tr>
+
+
+                <tr>
+                    <td id="courseCount">当前系统共有课程数： 1</td>
+                    <td><a class="button button-3d button-primary button-rounded" href="/admin/courseDetail"
+                           role="button">查看详情</a></td>
+                </tr>
+
+            </table>
+        </div>
+
+</div>
+</html>

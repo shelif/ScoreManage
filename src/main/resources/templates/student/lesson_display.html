@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/student/base (title='课程信息显示')">
+<!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        $.ajax({
+            type: "GET",
+            url: "/student/showCourseInfo",
+            async: true,
+            contentType: "application/json;charset=UTF-8",
+            dataType:"json",
+            data: {},
+            success: function (jsonData) {
+
+                var s = "";
+                //               alert(jsonData.data[1].length);
+                //                returnObj[0] = teachingClasses;
+                //                returnObj[1] = courses;
+                //                returnObj[2] = teachers;
+                for(var i = 0 ; i < jsonData.data[0].length; i++) {
+                    // alert(jsonData.data[1][i].cId);
+                    s += '<tr><td>' + jsonData.data[1][i].cId + '</td><td>' + jsonData.data[1][i].cName + '</td><td>' + jsonData.data[1][i].cScore+ '</td>'
+                        + '<td>' + jsonData.data[2][i].tName + '</td><td>' + jsonData.data[0][i].tcId + '</td><td>'+ jsonData.data[0][i].tcWeekTime + jsonData.data[0][i].tcLesson + '</td><td>'+jsonData.data[0][i].tcLocation +'</td></tr>';
+                    //   console.log(s);
+                }
+                $('#tableForLessonDisplay').append(s);
+            },
+            error: function (jsonData) {
+                console.log(data.code);
+                alert(data.code);
+            }
+        });
+    </script>
+    <script>
+        $.ajax({
+            type: "GET",
+            url: "/student/showCourseTableInfo",
+            async: true,
+            contentType: "application/json;charset=UTF-8",
+            dataType:"json",
+            data: {},
+            success: function (jsonData) {
+                for(var i = 0; i < 4; i++){
+                    var s = "<tr style=\"height: 70px\">";
+                    // style="height: 50px"
+                    for(var j = 0; j < 7; j++){
+
+                        if(jsonData.data[i][j] == "none"){
+                            s += '<td> </td>';
+                        }
+                        else{
+                            // s += '<td bgcolor="#1cddb1">';
+                            if(!(i & 1)) s += '<td bgcolor="#1cddb1">';
+                            else s += '<td bgcolor="#20ffcc">'
+                            s += jsonData.data[i][j];
+                            s += '</td>'
+                        }
+                    }
+                    s += '</tr>';
+                    $("#courseTable").append(s);
+                }
+            },
+            error: function (jsonData) {
+                console.log(data.code);
+                alert(data.code);
+            }
+        });
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <h1>课程表显示</h1>
+        </div>
+        <form id="S_display_ScheduleInfor"><div>
+            <table id="courseTable" class="table col1" table border="1" cellspacing="0" cellpadding="0" style="table-layout: fixed">
+                <thead>
+                <tr>
+                    <th>周一</th>
+                    <th>周二</th>
+                    <th>周三</th>
+                    <th>周四</th>
+                    <th>周五</th>
+                    <th>周六</th>
+                    <th>周日</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div></form>
+
+        <div>
+            <h1>选定课程信息如下</h1>
+        </div>
+        <form id="S_display_SelectedInfor"><div>
+            <table class="table col1"  id="tableForLessonDisplay">
+                <thead>
+                <tr>
+                    <th>课程号</th>
+                    <th>课程名</th>
+                    <th>课程学分</th>
+                    <th>任课老师</th>
+                    <th>教学班号</th>
+                    <th>上课时间</th>
+                    <th>上课地点</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div> </form>
+    </div>
+</div>
+</html>

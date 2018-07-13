@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/student/base (title='退选课程')">
+<!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>$(document).ready(function(c) {
+
+        $.ajax({
+            type: "GET",
+            url: "/student/showCourseInfoForDelete",
+            async: true,
+            contentType: "application/json;charset=UTF-8",
+            dataType:"json",
+            data: {},
+            success: function (jsonData) {
+
+                var s = "";
+                //               alert(jsonData.data[1].length);
+//                returnObj[0] = teachingClasses;
+//                returnObj[1] = courses;
+//                returnObj[2] = teachers;
+                for(var i = 0 ; i < jsonData.data[0].length; i++) {
+                    s += '<tr><td>' + jsonData.data[1][i].cId + '</td><td>' + jsonData.data[1][i].cName + '</td><td>' + jsonData.data[1][i].cScore+ '</td>'
+                        + '<td>' + jsonData.data[2][i].tName + '</td><td>';
+                    console.log(s);
+
+                    s += "<button class=\"button button-3d button-primary button-rounded button-tiny\" onclick='deleteCourse(";
+                    s += i;
+                    s+=  ")'>删除</button>";
+                    s += "</td><td ";
+
+                    s += 'id="tabletcid' + i + '"' + 'style="visibility: hidden">'+ jsonData.data[0][i].tcId;
+                    s += "</td></tr>";
+                }
+                $('#table_showFor_delete').append(s);
+            },
+            error: function (jsonData) {
+                console.log(data.code);
+                alert(data.code);
+            }
+        });
+    });
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <h1>退选课程</h1>
+        </div>
+        <form id="S_delete_ClassInfor"><div>
+            <table class="table col1" id="table_showFor_delete">
+                <thead>
+                <tr>
+                    <th>课程号</th>
+                    <th>课程名</th>
+                    <th>课程学分</th>
+                    <th>任课老师</th>
+                    <th>删除</th>
+                </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+
+        </div></form>
+
+    </div>
+    <script>
+
+        //    <!-- 功能：利用ajax方法，提交并在后端执行删除课程的请求 -->
+        //    <!-- 请求地址：/student/deleteCourse-->
+        //    编写人：陈雁彬
+        function deleteCourse(i) {
+//        alert("delete: " + i);
+//        alert("tcid=" + $("#tabletcid" + i).text());
+            var stuInfo = $("#studentInfoStore").text();
+            var tcid = $("#tabletcid" + i).text();
+
+
+            $.ajax({
+                type: "GET",
+                url: "/student/deleteCourse",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: { "stuInfo": stuInfo,"tcid": tcid},
+                success: function (jsonData) {
+                    if(jsonData.code == -1){
+                        alert(jsonData.msg);
+
+                        return;
+                    }
+
+                    refreshTable();
+                },
+                error: function (jsonData) {
+                    console.log(data.code);
+                    alert(data.code);
+                }
+            });
+        }
+
+        //  功能：在删除某一项课程之后，利用此ajax请求刷新课程信息
+        //  编写人：陈雁彬
+        function refreshTable(){
+            $.ajax({
+                type: "GET",
+                url: "/student/showCourseInfoForDelete",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {},
+                success: function (jsonData) {
+
+                    var s = "";
+                    //               alert(jsonData.data[1].length);
+//                returnObj[0] = teachingClasses;
+//                returnObj[1] = courses;
+//                returnObj[2] = teachers;
+                    for(var i = 0 ; i < jsonData.data[0].length; i++) {
+                        s += '<tr><td>' + jsonData.data[1][i].cId + '</td><td>' + jsonData.data[1][i].cName + '</td><td>' + jsonData.data[1][i].cScore+ '</td>'
+                            + '<td>' + jsonData.data[2][i].tName + '</td><td>';
+                        console.log(s);
+
+                        s += "<button onclick='deleteCourse(";
+                        s += i;
+                        s+=  ")'>删除</button>";
+                        s += "</td><td ";
+
+                        s += 'id="tabletcid' + i + '"' + 'style="visibility: hidden"> '+ jsonData.data[0][i].tcId;
+                        s += "</td></tr>";
+                    }
+                    $('#table_showFor_delete').append(s);
+                },
+                error: function (jsonData) {
+                    console.log(data.code);
+                    alert(data.code);
+                }
+            });
+
+
+        }
+
+    </script>
+</div>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/admin/base (title='修改学生结果')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+
+
+
+
+        window.onload = function () {
+
+
+
+            alert("22222");
+            var reg1 = new RegExp("(^|&)" + "sid" + "=([^&]*)(&|$)", "i");
+            var r1 = window.location.search.substr(1).match(reg1);
+            if (r1 != null) var sId= unescape(r1[2]);
+
+
+            console.log("sid is:"+ sId );
+
+
+
+            $.ajax({
+                type: "GET",
+                url: "/admin/studentModifyResultGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'sId':sId},
+                success: function (jsonData) {
+                    var s = "";
+                    if(jsonData.code==0 && jsonData.data!=null) {
+
+                        console.log(jsonData);
+
+                        s += '<tr><td>' + jsonData.data.sId + '</td><td>' + jsonData.data.sName + '</td><td>' + jsonData.data.sMajor + '</td>'
+                            + '<td>' + jsonData.data.sClass + '</td><td>' + jsonData.data.sTotalScore + ' </td><td>' +
+                            jsonData.data.sGpa + '</td><td>' + jsonData.data.sIQ + '</td></tr>';
+
+
+                        console.log(s);
+
+
+                        $('#inputfield').before(s);
+
+                    }
+                    else   alert("不存在该学生");
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("数据异常");
+                }
+            });
+        };
+
+
+
+
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <table class="table" >
+                <thead>
+                <tr>
+                    <th style="font-size: 20px" colspan="4">学籍信息</th>
+                </tr>
+                <tr>
+                    <th>学号</th>
+                    <th>姓名</th>
+                    <th>专业</th>
+                    <th>班级</th>
+                    <th>总学分</th>
+                    <th>绩点</th>
+                    <th>最终智育成绩</th>
+                </tr>
+                </thead>
+                <tr id="inputfield"><td>  ------
+                </td> <td> <input   type="text"   style="width: 60% " id= "sName">
+                </td> <td> <input   type="text"   style="width: 60% " id= "sMajor">
+                </td> <td> <input   type="text"   style="width: 60% " id= "sClass">
+                </td> <td> <input   type="text"   style="width: 60% " id= "sTotalScore">
+                </td> <td> <input   type="text"   style="width: 60% " id= "sGpa">
+                </td> <td> <input   type="text"   style="width: 60% " id= "sIQ">
+                </td></tr>
+            </table>
+        </div>
+
+
+        <input onclick="modifyStudent()" type="button" value="确定修改" class="button button-3d button-primary button-rounded" >
+        <script>
+            function modifyStudent(){
+
+
+                var reg1 = new RegExp("(^|&)" + "sid" + "=([^&]*)(&|$)", "i");
+                var r1 = window.location.search.substr(1).match(reg1);
+                if (r1 != null) var sId= unescape(r1[2]);
+
+
+                var sName =  $("#sName").val();
+
+                var sMajor =  $("#sMajor").val();
+                var sClass =  $("#sClass").val();
+                var sTotalScore =   $("#sTotalScore").val();
+                var sGpa =   $("#sGpa").val();
+                var sIQ =   $("#sIQ").val();
+
+                $.ajax({
+                    type: "PUT",
+                    url: "/admin/studentModifyResultPUT",
+                    async: false,
+                    contentType: "application/json;charset=UTF-8",
+                    dataType:"json",
+                    data: JSON.stringify({'sId':sId , 'sName':sName, 'sMajor':sMajor,'sClass':sClass,'sTotalScore':sTotalScore,'sGpa':sGpa,'sIQ':sIQ }),
+                    success: function (jsonData) {
+                        if(jsonData.code==0)
+                            window.location.reload();
+                        else
+                            alert("修改学生失败，不存在该学号");
+                    },
+
+                    error: function (jsonData) {
+                        console.log(jsonData.code);
+                        alert("数据格式有误");
+
+
+                    }
+                });
+            };
+
+        </script>
+    </div>
+</div>
+</html>

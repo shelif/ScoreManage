@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity3"
+      th:replace="/teacher/base (title='删除课程')"><!-- layout文件路径-->
+<div th:fragment="headscript">
+    <script>
+        var tcid = " " ;
+
+
+        window.onload = function () {
+
+
+
+
+
+
+
+            $.ajax({
+                type: "GET",
+                url: "/teacher/t_delete_calGET",
+                async: true,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: {'tid':'tid' },
+                success: function (jsonData) {
+                    var s = "";
+
+
+                    for(var i=0;i < jsonData.data.length; i++) {
+                        tcid = jsonData.data[i].tcid;
+                        s += '<tr><td>' + jsonData.data[i].tcid + '</td><td>' + jsonData.data[i].name
+                            +  '</td><td>' + jsonData.data[i].score +
+                            '</td><td>' + '<button  onclick="deleteCourse('  + jsonData.data[i].tcid +   ')"  class="button button-3d button-primary button-rounded button-tiny" type="submit">删除</button>'
+                            +'</td></tr>';
+
+                        console.log(s);
+
+
+                    }
+                    $('#teacherCourseTable').append(s);
+
+
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("查询课程失败");
+                }
+            });
+        };
+        //教学班不能以0开头，否则会自动去掉前面的0 如001 变为1 导致不能删除课程
+        //待解决bug*********
+        //发送json进行删除
+        function deleteCourse( i){
+
+
+
+            $.ajax({
+                type: "DELETE",
+                url: "/teacher/t_delete_calDELETE",
+                async: false,
+                contentType: "application/json;charset=UTF-8",
+                dataType:"json",
+                data: JSON.stringify({'tcId':tcid}),
+                success: function (jsonData) {
+                    if(jsonData.code==0) {
+
+                        window.location.reload();
+                    }
+                    else
+                        alert("删除失败");
+                },
+
+                error: function (jsonData) {
+                    console.log(jsonData.code);
+                    alert("不能删除有学生的课程");
+                }
+            });
+        };
+    </script>
+</div>
+<div th:fragment="content">
+    <div>
+        <div>
+            <div class="table_perinfo" >
+                <table class="table" id ="teacherCourseTable">
+                    <tr>
+                        <th>教学班号</th>
+                        <th>课程名</th>
+                        <th>课程学分</th>
+                        <th>删除</th>
+                    </tr>
+
+                </table>
+
+
+
+            </div>
+        </div>
+
+
+
+    </div>
+</div>
+</html>
+
