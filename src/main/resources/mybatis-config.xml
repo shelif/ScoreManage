@@ -8,4 +8,10 @@
         <setting name="useColumnLabel" value="true" />
         <setting name="mapUnderscoreToCamelCase" value="true" />
     </settings>
+    <plugins>
+        <plugin interceptor="com.example.demo.mybatis.locker.interceptor.OptimisticLocker">
+            <property name="versionColumn" value="xxx"/><!--数据库的列名-->
+            <property name="versionField" value="xxx"/> <!--java字段名-->
+        </plugin>
+    </plugins>
 </configuration>
