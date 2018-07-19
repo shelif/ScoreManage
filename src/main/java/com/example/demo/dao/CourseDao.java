@@ -5,6 +5,9 @@ import com.example.demo.entity.CourseExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.Cacheable;
+
 
 @Component
 public interface CourseDao {
@@ -20,6 +23,7 @@ public interface CourseDao {
 
     List<Course> selectByExample(CourseExample example);
 
+    @Cacheable(value="course", keyGenerator = "KeyGenerator")
     Course selectByPrimaryKey(String cId);
 
     int updateByExampleSelective(@Param("record") Course record, @Param("example") CourseExample example);

@@ -7,12 +7,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.cache.annotation.CacheConfig;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Service
+
+@CacheConfig(cacheNames="studentCache")
 public class StudentService {
     @Autowired
     private StudentDao studentDao;
@@ -49,6 +55,7 @@ public class StudentService {
     // returnObj[1] -- teachingClasses
     // returnObj[2] -- teachers
     // 未查询到相关课程：respEntity(-1, "noRecord", null)
+
     public RespEntity queryCourses(Course course){
 
         Object [] returnObjs = new Object[3];
@@ -132,6 +139,7 @@ public class StudentService {
     }
 
     // 功能：调用查询学生信息的服务
+
     public RespEntity homeGetRespService(String sId) {
         Student student=studentDao.queryStudentById(sId);
         return new RespEntity(0,"ok",student);
@@ -141,6 +149,7 @@ public class StudentService {
     // 字段：
     // stKey.getStSId() -- 学生学号
     // stKey.getStTcId() -- 学生的teachingClass信息
+
     public RespEntity chooseCourse(StKey stKey){
 
         // 判断是否已经选择该课程
@@ -235,6 +244,7 @@ public class StudentService {
     }
 
     // 功能：
+
     public RespEntity showCourseInfoThatHasBeenChoosen(String SId){
         List<StKey> stKeys = new ArrayList<>();
 
@@ -351,13 +361,13 @@ public class StudentService {
             courseTableStored[ind1][ind2] = courses.get(i).getcName();
         }
     }
-
+    @CachePut(key="#p0.id")
     public RespEntity showCourseTableInfoThatHasBeenChoosen(String SId){
         updateCourseTable();
 
         return new RespEntity(0, "课表信息", courseTableStored);
     }
-
+    @CachePut(key="#p0.id")
     public RespEntity deleteCourse(StKey stKey){
  //       List<StKey> stKeys = new ArrayList<>();
         StExample stExample = new StExample();

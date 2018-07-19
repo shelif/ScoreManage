@@ -4,6 +4,7 @@ import com.example.demo.entity.TeachingClass;
 import com.example.demo.entity.TeachingClassExample;
 import java.util.List;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,7 +20,7 @@ public interface TeachingClassDao {
     int insertSelective(TeachingClass record);
 
     List<TeachingClass> selectByExample(TeachingClassExample example);
-
+    @Cacheable(value="teachingClass", keyGenerator = "KeyGenerator")
     TeachingClass selectByPrimaryKey(String tcId);
 
     int updateByExampleSelective(@Param("record") TeachingClass record, @Param("example") TeachingClassExample example);
