@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,7 +56,7 @@ public class StudentService {
     // returnObj[1] -- teachingClasses
     // returnObj[2] -- teachers
     // 未查询到相关课程：respEntity(-1, "noRecord", null)
-
+    @Cacheable(value="queryCourses", keyGenerator = "KeyGenerator")
     public RespEntity queryCourses(Course course){
 
         Object [] returnObjs = new Object[3];
@@ -361,13 +362,13 @@ public class StudentService {
             courseTableStored[ind1][ind2] = courses.get(i).getcName();
         }
     }
-    @CachePut(key="#p0.id")
+
     public RespEntity showCourseTableInfoThatHasBeenChoosen(String SId){
         updateCourseTable();
 
         return new RespEntity(0, "课表信息", courseTableStored);
     }
-    @CachePut(key="#p0.id")
+
     public RespEntity deleteCourse(StKey stKey){
  //       List<StKey> stKeys = new ArrayList<>();
         StExample stExample = new StExample();

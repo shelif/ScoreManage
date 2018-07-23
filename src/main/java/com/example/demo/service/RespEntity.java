@@ -1,10 +1,13 @@
 package com.example.demo.service;
 
-public class RespEntity {
+
+import java.io.Serializable;
+
+public class RespEntity  implements Serializable {
     private int code;
     private String msg;
     private Object data;
-
+    private static final long serialVersionUID = -8366929034564774130L;
     @Override
     public String toString() {
         return "RespEntity{" +
