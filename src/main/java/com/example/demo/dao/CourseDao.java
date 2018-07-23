@@ -23,7 +23,7 @@ public interface CourseDao {
 
     List<Course> selectByExample(CourseExample example);
 
-
+    @Cacheable(value="Course", keyGenerator = "KeyGenerator")
     Course selectByPrimaryKey(String cId);
 
     int updateByExampleSelective(@Param("record") Course record, @Param("example") CourseExample example);

@@ -23,6 +23,7 @@ public interface ScDao {
 
     int insertSelective(Sc record);
 
+    @Cacheable(value="sc", keyGenerator = "KeyGenerator")
     List<Sc> selectByExample(ScExample example);
 
     @Cacheable(value="sc", keyGenerator = "KeyGenerator")

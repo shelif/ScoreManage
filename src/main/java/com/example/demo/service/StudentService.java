@@ -135,7 +135,7 @@ public class StudentService {
             return new RespEntity(-1,"no such course",null);
         }
         //List<Teacher> teachers = (List<Teacher>) teacherDao.selectByPrimaryKey(cno);
-
+        //返回【查到的courses数组，courses对应有开设教学班的teachingclass数组，开设courses的教师数组
         return new RespEntity(0, "ok", returnObjs);
     }
 
